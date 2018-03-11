@@ -1,0 +1,26 @@
+{
+    "manifest_version": 2,
+    "name": "Vocbase",
+    "version": "0.1.0",
+    "description": "Vocbase: save words for later review.",
+    "background": {
+        "scripts": ["background.js"]
+      },
+    "content_scripts": [
+      {
+        "matches": [ "http://*/*", "https://*/*" ],
+        "js": [ "content.js" ]
+      }
+    ],
+    "permissions": [
+        "contextMenus",
+        //"background",
+        "activeTab",
+        "tabs",
+        "webRequest",
+        "webRequestBlocking",
+        "http://localhost:3000/*",
+        "http://*/*",
+        "https://*/*"
+    ]
+}
