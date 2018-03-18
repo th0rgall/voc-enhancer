@@ -1,29 +1,30 @@
-// create "start learning" context
+// create "start learning" context menu
 chrome.contextMenus.create({id: "learnvoc", title:"Learn '%s' on voc.com", contexts: ["selection"], 
   "onclick": startLearning});
 
-// create "add to" context
+// create "add to" context menus
 function createAddToContext() {
-  let refererUrl = `https://www.vocabulary.com/dictionary/hacker`; 
-  withModifiedReferrer(refererUrl, (detachHook) => {
+  const refererUrl = `https://www.vocabulary.com/dictionary/hacker`; 
+  const requestUrl = "https://www.vocabulary.com/lists/byprofile.json";
+
+  withModifiedReferrer(refererUrl, requestUrl, (detachHook) => {
     var req = new XMLHttpRequest();
-    req.open("GET", "https://www.vocabulary.com/lists/byprofile.json", true);
+    req.open("GET", requestUrl, true);
     req.withCredentials = true;
     req.setRequestHeader("X-Requested-With", "XMLHttpRequest");
     req.responseType = "json";
     req.onreadystatechange = function () {
       if (req.readyState == 4 && req.status == 200) {
-        chrome.contextMenus.create({id: "addtoParent", title: "Add '%s' to..."});
+        chrome.contextMenus.create({id: "addtoParent", title: "Add '%s' to...", contexts: ["selection"]});
         req.response.result.wordlists.forEach((wordList) => {
           chrome.contextMenus.create({id: `addto-${wordList.name}`, 
-          title: wordList.name, parentId: "addtoParent", onclick: addTo(wordList.wordlistid)})
-        }
-        );
+          title: wordList.name, parentId: "addtoParent", contexts: ["selection"], onclick: addTo(wordList.wordlistid)})
+        });
+        detachHook();
       }
       else if (req.status != 200) {
         console.log(`Error: ` + req.responseText);
       }
-      detachHook();
     }
     req.send();
   }); 
@@ -34,11 +35,12 @@ createAddToContext();
 
 /**
  * Execute an function with a modified Referer header for browser requests
- * @param {*} refererUrl 
+ * @param {*} refererUrl the referer URL that will be injected
+ * @param {*} requestUrl the request URL's for which the header has to be injected
  * @param {*} action the action (request) to be executed. 
  *                  Gets passed a function that will detach the header modifier hook if called
  */
-function withModifiedReferrer(refererUrl, action) {
+function withModifiedReferrer(refererUrl, requestUrl, action) {
   function refererListener(details) {
     const i = details.requestHeaders.findIndex(e => e.name.toLowerCase() == "referer");
     if (i != -1) {
@@ -46,23 +48,25 @@ function withModifiedReferrer(refererUrl, action) {
     } else {
       details.requestHeaders.push({name: "Referer", value: refererUrl});
     }
-    return Promise.resolve(details);
+    // Firefox uses promis
+    // return Promise.resolve(details);
+    // Chrome doesn't. Todo: https://github.com/mozilla/webextension-polyfill
+
+    // important: do create a new object, passing the modified argument does not work
+    return {requestHeaders: details.requestHeaders};
   }
 
   // modify headers with webRequest hook
-  browser.webRequest.onBeforeSendHeaders.addListener(
+  chrome.webRequest.onBeforeSendHeaders.addListener(
     refererListener, //  function
-    {urls: [
-      "https://www.vocabulary.com/progress/startlearning.json",     //  RequestFilter object
-      "https://www.vocabulary.com/lists/byprofile.json", 
-      "https://www.vocabulary.com/lists/save.json"]}, 
+    {urls: [requestUrl]}, // RequestFilter object
     ["requestHeaders", "blocking"] //  extraInfoSpec
   );
 
   action(() => {
     // detach hook
-    if (browser.webRequest.onBeforeSendHeaders.hasListener(refererListener)) {
-      browser.webRequest.onBeforeSendHeaders.removeListener(refererListener)
+    if (chrome.webRequest.onBeforeSendHeaders.hasListener(refererListener)) {
+      chrome.webRequest.onBeforeSendHeaders.removeListener(refererListener)
     }
   });
 }
@@ -82,20 +86,21 @@ function startLearning(info, tab) {;
 function startLearningWord(wordToLearn) {
     console.log("Trying to learn " + wordToLearn)
     let refererUrl = `https://www.vocabulary.com/dictionary/${wordToLearn}`; 
+    let requestUrl = "https://www.vocabulary.com/progress/startlearning.json";
 
-    withModifiedReferrer(refererUrl, (detachHook) => {
+    withModifiedReferrer(refererUrl, requestUrl, (detachHook) => {
       var req = new XMLHttpRequest();
-      req.open("POST", "https://www.vocabulary.com/progress/startlearning.json", true);
+      req.open("POST", requestUrl, true);
       req.withCredentials = true;
       req.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
       req.onreadystatechange = function () {
         if (req.readyState == 4 && req.status == 200) {
             console.log(req.responseText);
+            detachHook();
         }
         else if (req.status != 200) {
           console.log(`Error: ` + req.responseText);
         }
-        detachHook();
       }
       req.send(`word=${wordToLearn}`);
     });
@@ -103,11 +108,12 @@ function startLearningWord(wordToLearn) {
 
 function addToList(listId, wordToSave) {
   console.log("Trying to save " + wordToSave)
-  let refererUrl = `https://www.vocabulary.com/dictionary/${wordToSave}`; 
+  const refererUrl = `https://www.vocabulary.com/dictionary/${wordToSave}`; 
+  const requestUrl = "https://www.vocabulary.com/lists/save.json";
 
-  withModifiedReferrer(refererUrl, (detachHook) => {
+  withModifiedReferrer(refererUrl, requestUrl, (detachHook) => {
     var req = new XMLHttpRequest();
-    req.open("POST", "https://www.vocabulary.com/lists/save.json", true);
+    req.open("POST", requestUrl, true);
     req.withCredentials = true;
     req.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
     let saveObj = {
@@ -117,12 +123,12 @@ function addToList(listId, wordToSave) {
     req.onreadystatechange = function () {
       if (req.readyState == 4 && req.status == 200) {
           console.log(req.responseText);
+          detachHook();
       }
       else if (req.status != 200) {
         console.log(`Error: ` + req.responseText);
       }
-      detachHook();
-    }
+     }
     const toSend = `addwords=${encodeURIComponent(JSON.stringify([saveObj]))}&id=${listId}`;
     req.send(toSend);
   });
