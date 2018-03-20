@@ -1,6 +1,10 @@
 # Voc.com adder
 
-This browser extension for Firefox/Chrome allows vocabulary.com users to start learning words from any website without opening a new tab.
+This browser extension for Firefox/Chrome allows [vocabulary.com](https://www.vocabulary.com/) users to add selected words to their lists from any website.
+
+## Installation
+
+[Download page](https://github.com/th0rgall/voc-adder/releases)
 
 ## Usage
 
