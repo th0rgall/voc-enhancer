@@ -1,11 +1,12 @@
-// create "start learning" context menu
-chrome.contextMenus.create({id: "learnvoc", title:"Learn '%s' on voc.com", contexts: ["selection"], 
-  "onclick": startLearning});
+
 
 // create "add to" context menus
-function createAddToContext() {
+function createContextMenus() {
   const refererUrl = `https://www.vocabulary.com/dictionary/hacker`; 
   const requestUrl = "https://www.vocabulary.com/lists/byprofile.json";
+
+  // options: name, createdate, wordcount, activitydate TODO: make options
+  let sortBy = "modifieddate"
 
   withModifiedReferrer(refererUrl, requestUrl, (detachHook) => {
     var req = new XMLHttpRequest();
@@ -15,10 +16,19 @@ function createAddToContext() {
     req.responseType = "json";
     req.onreadystatechange = function () {
       if (req.readyState == 4 && req.status == 200) {
-        chrome.contextMenus.create({id: "addtoParent", title: "Add '%s' to...", contexts: ["selection"]});
-        req.response.result.wordlists.forEach((wordList) => {
+        chrome.contextMenus.create({id: "addtoParent", title: "voc.com: add '%s' to...", contexts: ["selection"]});
+        // create "start learning" context menu
+        chrome.contextMenus.create({id: "learnvoc", parentId: "addtoParent", title:"Just Start Learning", contexts: ["selection"], 
+        "onclick": startLearning});
+        // separator
+        chrome.contextMenus.create({id: "sep", parentId: "addtoParent", type: "separator", contexts: ["selection"]});
+        // add list entries
+        req.response.result.wordlists
+          .filter(wl => wl.owner)
+          .sort((a,b) => a[sortBy] > b[sortBy] ? -1 : 1) // high to low
+          .forEach((wordList) => {
           chrome.contextMenus.create({id: `addto-${wordList.name}`, 
-          title: wordList.name, parentId: "addtoParent", contexts: ["selection"], onclick: addTo(wordList.wordlistid)})
+          title: `${wordList.name} (${wordList.wordcount})`, parentId: "addtoParent", contexts: ["selection"], onclick: addTo(wordList.wordlistid)})
         });
         detachHook();
       }
@@ -31,7 +41,7 @@ function createAddToContext() {
   
 }
 
-createAddToContext();
+createContextMenus();
 
 /**
  * Execute an function with a modified Referer header for browser requests
