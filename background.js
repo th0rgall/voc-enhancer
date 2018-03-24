@@ -133,6 +133,14 @@ function addToList(listId, wordToSave) {
     req.onreadystatechange = function () {
       if (req.readyState == 4 && req.status == 200) {
           console.log(req.responseText);
+          // send notification
+          const notificationId = `add-${wordToSave}-to-${listId}`;
+          createNotification(notificationId,
+            `'${wordToSave}' added successfully`,
+            `'${wordToSave}' was added to ${listId}.\nClick to open in voc.com.`,
+            () => {
+              chrome.tabs.create({url: `https://www.vocabulary.com/dictionary/${wordToSave}`});
+            });
           detachHook();
       }
       else if (req.status != 200) {
@@ -142,4 +150,36 @@ function addToList(listId, wordToSave) {
     const toSend = `addwords=${encodeURIComponent(JSON.stringify([saveObj]))}&id=${listId}`;
     req.send(toSend);
   });
+}
+
+// create a notification with the given title, message and onClick function
+function createNotification(notificationId, title, message, onClick) {
+  chrome.notifications.create(notificationId, {
+    type: "basic",
+    iconUrl: "voc_favicon.png",
+    title: title,
+    message: message
+  });
+  addNotificationClickListener(notificationId, onClick);
+}
+
+// adds a listener that will execute the given action when the notification is clicked
+// makes sure the listener is removed when the notification is closed
+function addNotificationClickListener(notificationId, action) {
+  const clickListener = (clickedId) => {
+    if (clickedId === notificationId) {
+      action();
+    }
+  };
+  // TODO: is onClose also triggered after a click?
+  const closeListener = (closedId) => {
+    if (closedId === notificationId) {
+      // remove click listener
+      chrome.notications.onClicked.removeListener(clickListener);
+      // remove itself (closeListener)
+      chrome.notifications.onClosed.removeListener(closeListener);
+    }
+  }
+  chrome.notifications.onClicked.addListener(clickListener);
+  chrome.notifications.onClosed.addListener(closeListener);
 }

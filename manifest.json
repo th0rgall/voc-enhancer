@@ -8,11 +8,11 @@
     },
     "permissions": [
         "contextMenus",
-        //"background",
         "activeTab",
         "tabs",
         "webRequest",
         "webRequestBlocking",
+        "notifications",
         "http://*/*",
         "https://*/*"
     ]
