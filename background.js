@@ -81,16 +81,30 @@ function withModifiedReferrer(refererUrl, requestUrl, action) {
   });
 }
 
+// detects multiple words in the selection text
+// and call the given function on it 
+function addAll(selectionText, addFunction) {
+    const words = selectionText.trim().split(/\s/);
+    if (words.length > 1) {
+        words.forEach(addFunction); 
+    } else if (words.length === 1) {
+        addFunction(words); 
+    } else {
+        console.warn('voc-adder: no text selected.');
+    }
+}
+
+
 // returns an onlick function for the Add To... context menu
 function addTo(wordListId) {
   return (info, tab) => {
-    addToList(wordListId, info.selectionText.toLowerCase());
+    addAll(info.selectionText.toLowerCase(), addToList.bind(null, wordListId));
   }
 }
 
 // the onclick function for start learning
-function startLearning(info, tab) {;
-  startLearningWord(info.selectionText.toLowerCase());
+function startLearning(info, tab) {
+    addAll(info.selectionText.toLowerCase(), startLearningWord);
 }
 
 function startLearningWord(wordToLearn) {
