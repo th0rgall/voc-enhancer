@@ -1,25 +1,44 @@
+chrome.runtime.onConnect.addListener((port) => {
+  if (port.name === 'vocadder') {
+    port.onMessage.addListener(({type: type, selection: selection}) => {
+      if (type === 'checkLogin') {
+        checkLogin();
+      } else if (type === 'selection') {
+        checkSelection(selection);
+      }
+    });
+  }
+});
+
+loggedIn = false;
 checkLogin();
 
 // log-in check
 function checkLogin() {
-  requestUrl = 'https://www.vocabulary.com/account/progress';
-  var req = new XMLHttpRequest();
-  req.open("GET", requestUrl, true);
-  //req.withCredentials = true;
-  req.setRequestHeader("X-Requested-With", "XMLHttpRequest");
-  req.responseType = "json";
-  req.onload = function () {
-    if (req.responseURL !== requestUrl) { // response url was not same as requested url: 302 login redirect happened
-      // create a context menu to redirect to a login page
-      chrome.contextMenus.create({id: "login", title: "Log in to voc.com to save words", onclick: () => {
-        chrome.tabs.create({url: 'https://www.vocabulary.com/login'});
-      }});
-    } else {
-      createContextMenus();
+  if (!loggedIn) {
+    requestUrl = 'https://www.vocabulary.com/account/progress';
+    var req = new XMLHttpRequest();
+    req.open("GET", requestUrl, true);
+    //req.withCredentials = true;
+    req.setRequestHeader("X-Requested-With", "XMLHttpRequest");
+    req.responseType = "json";
+    req.onload = function () {
+      if (req.responseURL !== requestUrl) { // response url was not same as requested url: 302 login redirect happened
+        // create a context menu to redirect to a login page
+        chrome.contextMenus.create({id: "login", title: "Log in to voc.com to save words", onclick: () => {
+          chrome.tabs.create({url: 'https://www.vocabulary.com/login'});
+        }});
+      } else {
+        loggedIn = true;
+        chrome.contextMenus.remove("login");
+        createContextMenus();
+      }
     }
+    req.send();
   }
-  req.send();
 }
+
+const addToText = "voc.com: add '%s' to...";
 
 // create "add to" context menus
 function createContextMenus() {
@@ -37,7 +56,7 @@ function createContextMenus() {
     req.responseType = "json";
     req.onreadystatechange = function () {
       if (req.readyState == 4 && req.status == 200) {
-        chrome.contextMenus.create({id: "addtoParent", title: "voc.com: add '%s' to...", contexts: ["selection"]});
+        chrome.contextMenus.create({id: "addtoParent", title: addToText, contexts: ["selection"]});
         // create "start learning" context menu
         chrome.contextMenus.create({id: "learnvoc", parentId: "addtoParent", title:"Just Start Learning", contexts: ["selection"], 
         onclick: startLearning});
@@ -59,8 +78,23 @@ function createContextMenus() {
     }
     req.send();
   }); 
-  
 }
+
+function getWords(selection) {
+  return selection.trim().split(/\s/);
+}
+
+// update context menu entry when selection contains more words
+function checkSelection(selection) {
+  const words = getWords(selection);
+  if (words.length > 1) {
+    chrome.contextMenus.update('addtoParent', {title: `voc.com: add ${words.length} words to...`});
+  } else {
+    // reset
+    chrome.contextMenus.update('addtoParent', {title: addToText});
+  }
+}
+
 
 /**
  * Execute an function with a modified Referer header for browser requests
@@ -103,7 +137,7 @@ function withModifiedReferrer(refererUrl, requestUrl, action) {
 // detects multiple words in the selection text
 // and call the given function on it 
 function addAll(selectionText, addFunction) {
-    const words = selectionText.trim().split(/\s/);
+    const words = getWords(selectionText);
     if (words.length > 1) {
         words.forEach(addFunction); 
     } else if (words.length === 1) {

@@ -6,6 +6,10 @@
     "background": {
         "scripts": ["background.js"]
     },
+    "content_scripts": [{
+        "matches": ["*://*/*"],
+        "js": ["content.js"]
+    }],
     "permissions": [
         "contextMenus",
         "activeTab",
