@@ -1,4 +1,25 @@
+checkLogin();
 
+// log-in check
+function checkLogin() {
+  requestUrl = 'https://www.vocabulary.com/account/progress';
+  var req = new XMLHttpRequest();
+  req.open("GET", requestUrl, true);
+  //req.withCredentials = true;
+  req.setRequestHeader("X-Requested-With", "XMLHttpRequest");
+  req.responseType = "json";
+  req.onload = function () {
+    if (req.responseURL !== requestUrl) { // response url was not same as requested url: 302 login redirect happened
+      // create a context menu to redirect to a login page
+      chrome.contextMenus.create({id: "login", title: "Log in to voc.com to save words", onclick: () => {
+        chrome.tabs.create({url: 'https://www.vocabulary.com/login'});
+      }});
+    } else {
+      createContextMenus();
+    }
+  }
+  req.send();
+}
 
 // create "add to" context menus
 function createContextMenus() {
@@ -19,7 +40,7 @@ function createContextMenus() {
         chrome.contextMenus.create({id: "addtoParent", title: "voc.com: add '%s' to...", contexts: ["selection"]});
         // create "start learning" context menu
         chrome.contextMenus.create({id: "learnvoc", parentId: "addtoParent", title:"Just Start Learning", contexts: ["selection"], 
-        "onclick": startLearning});
+        onclick: startLearning});
         // separator
         chrome.contextMenus.create({id: "sep", parentId: "addtoParent", type: "separator", contexts: ["selection"]});
         // add list entries
@@ -41,8 +62,6 @@ function createContextMenus() {
   
 }
 
-createContextMenus();
-
 /**
  * Execute an function with a modified Referer header for browser requests
  * @param {*} refererUrl the referer URL that will be injected
@@ -58,7 +77,7 @@ function withModifiedReferrer(refererUrl, requestUrl, action) {
     } else {
       details.requestHeaders.push({name: "Referer", value: refererUrl});
     }
-    // Firefox uses promis
+    // Firefox uses promises
     // return Promise.resolve(details);
     // Chrome doesn't. Todo: https://github.com/mozilla/webextension-polyfill
 
@@ -90,7 +109,7 @@ function addAll(selectionText, addFunction) {
     } else if (words.length === 1) {
         addFunction(words); 
     } else {
-        console.warn('voc-adder: no text selected.');
+        console.warn('voc-adder: no text selected');
     }
 }
 
