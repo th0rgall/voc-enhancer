@@ -1,3 +1,4 @@
+// incoming connection
 chrome.runtime.onConnect.addListener((port) => {
   if (port.name === 'vocadder') {
     port.onMessage.addListener(({type: type, selection: selection}) => {
@@ -9,6 +10,9 @@ chrome.runtime.onConnect.addListener((port) => {
     });
   }
 });
+
+// outgoing connection
+let outPort;
 
 loggedIn = false;
 checkLogin();
@@ -70,6 +74,11 @@ function createContextMenus() {
           chrome.contextMenus.create({id: `addto-${wordList.name}`, 
           title: `${wordList.name} (${wordList.wordcount})`, parentId: "addtoParent", contexts: ["selection"], onclick: addTo(wordList.wordlistid)})
         });
+        // separator 2
+        chrome.contextMenus.create({id: "sep2", parentId: "addtoParent", type: "separator", contexts: ["selection"]});
+        // add to new list entry
+        chrome.contextMenus.create({id: "addtoNew", parentId: "addtoParent", title: "Add to a new list...", contexts: ["selection"], onclick: addToNewHandler
+      })
         detachHook();
       }
       else if (req.status != 200) {
@@ -183,6 +192,14 @@ function startLearningWord(wordToLearn) {
     });
 }
 
+function getFormData(object) {
+  // const formData = new FormData();
+  // Object.keys(object).forEach(key => formData.append(key, object[key]));
+  let returnString = '';
+  Object.keys(object).forEach((key, index) => returnString += `${index === 0 ? '' : '&'}${key}=${encodeURIComponent(object[key])}`)
+  return returnString;
+}
+
 function addToList(listId, wordToSave) {
   console.log("Trying to save " + wordToSave)
   const refererUrl = `https://www.vocabulary.com/dictionary/${wordToSave}`; 
@@ -217,6 +234,64 @@ function addToList(listId, wordToSave) {
     const toSend = `addwords=${encodeURIComponent(JSON.stringify([saveObj]))}&id=${listId}`;
     req.send(toSend);
   });
+}
+
+function addToNewHandler(info, tab) {
+
+  // set up outgoing port
+  chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+    outPort = chrome.tabs.connect(tabs[0].id, {name: "vocadder-back"});
+
+    // becomes invalid after response
+    outPort.onMessage.addListener(function(msg) {
+      if (msg.type === 'addtoNew') {
+        addToNewList(getWords(info.selectionText), msg.name, '', false);
+      }
+    });
+    outPort.postMessage({type: 'addtoNew'});
+  });
+}  
+
+// @param words an array of words to add
+function addToNewList(words, listName, description, shared) {
+  const refererUrl = `https://www.vocabulary.com/lists/vocabgrabber`; 
+  const requestUrl = "https://www.vocabulary.com/lists/save.json";
+
+  let saveObj = {
+    "words": words.map((w) => { return {"word": w} }),
+    "name": listName,
+    "description": description,
+    "action": "create",
+    "shared": shared
+  }
+
+  withModifiedReferrer(refererUrl, requestUrl, (detachHook) => {
+    var req = new XMLHttpRequest();
+    req.open("POST", requestUrl, true);
+    req.responseType = "json";
+    req.withCredentials = true;
+    req.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+
+    req.onreadystatechange = function () {
+      if (req.readyState == 4 && req.status == 200) {
+          console.log(req.response);
+          let listId = req.response.result;
+          // send notification
+          const notificationId = `add-words-to-${listId}`;
+          createNotification(notificationId,
+            `'${listName}' was created successfully`,
+            `'${words.length}' words were added to ${listName}.\nClick to open in voc.com.`,
+            () => {
+              chrome.tabs.create({url: `https://www.vocabulary.com/lists/${listId}`});
+            });
+          detachHook();
+      }
+      else if (req.status != 200) {
+        console.log(`Error: ` + req.response);
+      }
+     }
+    req.send(getFormData({'wordlist': JSON.stringify(saveObj)}));
+  }); 
 }
 
 // create a notification with the given title, message and onClick function
