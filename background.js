@@ -252,7 +252,11 @@ function addToNewHandler(info, tab) {
   });
 }  
 
-// @param words an array of words to add
+/** @param words an array of words to add to the new list
+* @param listName name of the new list
+* @param description description of the list
+* @param shared boolean that shows whether list should be shared or not
+*/ 
 function addToNewList(words, listName, description, shared) {
   const refererUrl = `https://www.vocabulary.com/lists/vocabgrabber`; 
   const requestUrl = "https://www.vocabulary.com/lists/save.json";
