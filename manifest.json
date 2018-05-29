@@ -4,7 +4,7 @@
     "version": "0.2.0",
     "description": "Add selected words to your vocabulary.com lists.",
     "background": {
-        "scripts": ["background.js"]
+        "scripts": ["vocabulary-api.js", "background.js"]
     },
     "content_scripts": [{
         "matches": ["*://*/*"],
