@@ -45,11 +45,9 @@ const addToText = "voc.com: add '%s' to...";
 
 // create "add to" context menus
 function createContextMenus() {
-  // options: name, createdate, wordcount, activitydate TODO: make options
-  let sortBy = "modifieddate"
 
   vocapi.getLists()
-  .then((response) => {
+  .then((lists) => {
     chrome.contextMenus.create({id: "addtoParent", title: addToText, contexts: ["selection"]});
     // create "start learning" context menu
     chrome.contextMenus.create({id: "learnvoc", parentId: "addtoParent", title:"Just Start Learning", contexts: ["selection"], 
@@ -57,10 +55,7 @@ function createContextMenus() {
     // separator
     chrome.contextMenus.create({id: "sep", parentId: "addtoParent", type: "separator", contexts: ["selection"]});
     // add list entries
-    response.result.wordlists
-      .filter(wl => wl.owner)
-      .sort((a,b) => a[sortBy] > b[sortBy] ? -1 : 1) // high to low
-      .forEach((wordList) => {
+    lists.forEach((wordList) => {
       chrome.contextMenus.create({id: `addto-${wordList.name}`, 
       title: `${wordList.name} (${wordList.wordcount})`, parentId: "addtoParent", contexts: ["selection"], onclick: addToF(wordList.wordlistid)})
     });
@@ -97,17 +92,15 @@ function addToF(wordListId) {
       const notificationId = `add-${words[0]}-to-${wordListId}`;
       if (words.length > 1) {
         createNotification(notificationId,
-          // TODO: transform id to name
           `'${words.length}' words added succesfully`,
-          `'${words.length}' words were added to ${wordListId}.\nClick to open in voc.com.`,
+          `'${words.length}' words were added to ${vocapi.getListNameSync(wordListId)}.\nClick to open in voc.com.`,
           () => {
             chrome.tabs.create({url: `https://www.vocabulary.com/lists/${wordListId}`});
           });
       } else {
         createNotification(notificationId,
           `'${wordToSave}' added successfully`,
-          // TODO: transform id to name
-          `'${wordToSave}' was added to ${wordListId}.\nClick to open in voc.com.`,
+          `'${wordToSave}' was added to ${vocapi.getListNameSync(wordListId)}.\nClick to open in voc.com.`,
           () => {
             chrome.tabs.create({url: `https://www.vocabulary.com/dictionary/${wordToSave}`});
           }); 

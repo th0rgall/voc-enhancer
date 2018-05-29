@@ -7,6 +7,7 @@ class VocAPI {
         this.PROTOCOL = 'https';
         this.HOST = 'www.vocabulary.com';
         this.URLBASE = `${this.PROTOCOL}://${this.HOST}`;
+        this.listNameCache = {};
 
         this.loggedIn = false;
     }
@@ -39,6 +40,20 @@ class VocAPI {
         }
     }
 
+    getListName(id) {
+        if (id in this.listNameCache) {
+            return Promise.resolve(this.listNameCache[id]);
+        } else {
+            return Promise.reject('Name not found in cache');
+        }
+    }
+
+    getListNameSync(id) {
+        if (id in this.listNameCache) {
+            return this.listNameCache[id];
+        } 
+    }
+
     /**
      * 
      */
@@ -47,6 +62,9 @@ class VocAPI {
             const refererUrl = `${this.URLBASE}/dictionary/hacker`; 
             const requestUrl = `${this.URLBASE}/lists/byprofile.json`;
 
+            // options: name, createdate, wordcount, activitydate TODO: make options
+            let sortBy = "modifieddate"
+
             VocAPI.withModifiedReferrer(refererUrl, requestUrl, (detachHook) => {
                 var req = new XMLHttpRequest();
                 req.open("GET", requestUrl, true);
@@ -54,10 +72,19 @@ class VocAPI {
                 req.setRequestHeader("X-Requested-With", "XMLHttpRequest");
                 req.responseType = "json";
                 // TODO: this versus onload?
-                req.onreadystatechange = function () {
+                req.onreadystatechange = () => {
                     if (req.readyState == 4 && req.status == 200) {
                         detachHook();
-                        resolve(req.response);
+                        
+                        const lists = req.response.result.wordlists
+                            .filter(wl => wl.owner)
+                            .sort((a,b) => a[sortBy] > b[sortBy] ? -1 : 1); // high to low
+                        
+                        // fill cache with names
+                        lists.forEach(wl => {
+                            this.listNameCache[wl.wordlistid] = wl.name;
+                        })
+                        resolve(lists);
                     }
                     else if (req.status != 200) {
                         console.log(`Error: ` + req.responseText);
