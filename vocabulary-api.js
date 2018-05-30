@@ -98,7 +98,7 @@ class VocAPI {
     }
 
     /**
-     * 
+     * @param wordToLearn as a plain word
      */
     startLearning(wordToLearn) {
         return new Promise((resolve, reject) => {
@@ -126,8 +126,31 @@ class VocAPI {
         });
     }
 
+    /**
+     * Maps words from this interface's format to voc.com's format
+     * Adds some obvious info
+     * @param {} w 
+     */
+    static wordMapper(w) {
+        let nw = {
+        "word": w.word,
+        "lang": "en"
+        }
+        w.description ? nw["description"] = w.description : false;
+        w.example ? nw["example"] = { "text": w.example } : false;
+        return nw;
+    }
+
     /** 
-    * @param words an array of words to add to the list
+    * @param words an array of words to add to the list - format:
+    * [
+        {
+            "word":"kangaroo",
+            "description":"Test kangaroo", 
+            "example": "Kangaroo makes me boo"
+        }
+        ]
+        description and example are optional
     * @param listId id of the listlist
     */ 
     addToList(words, listId) {
@@ -141,12 +164,7 @@ class VocAPI {
               req.open("POST", requestUrl, true);
               req.withCredentials = true;
               req.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
-              let wordObjects = words.map(w => {
-                  return  {
-                    "word": w,
-                    "lang": "en"
-                  }
-              });
+              let wordObjects = words.map(VocAPI.wordMapper);
 
               req.onload = function () {
                 if (req.status == 200) {
@@ -180,7 +198,8 @@ class VocAPI {
             const requestUrl = `${this.URLBASE}lists/save.json`;
           
             let listObj = {
-              "words": words.map((w) => { return {"word": w} }),
+              //"words": words.map((w) => { return {"word": w} }),
+              "words": words.map(VocAPI.wordMapper),
               "name": listName,
               "description": description,
               "action": "create",
