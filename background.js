@@ -3,7 +3,7 @@
 let vocapi = new VocAPI();
 
 logError = (err) => {
-  console.log(err);
+  console.log("API Error: " + err);
 }
 
 function checkLogin() {
@@ -122,7 +122,8 @@ function addToF(wordListId) {
     vocapi.addToList(words, wordListId)
     .then( () => {
       // send notification
-      const notificationId = `add-${words[0].word}-to-${wordListId}`;
+      const firstWord = words[0].word;
+      const notificationId = `add-${firstWord}-to-${wordListId}`;
       if (words.length > 1) {
         createNotification(notificationId,
           `'${words.length}' words added succesfully`,
@@ -132,10 +133,10 @@ function addToF(wordListId) {
           });
       } else {
         createNotification(notificationId,
-          `'${wordToSave}' added successfully`,
-          `'${wordToSave}' was added to ${vocapi.getListNameSync(wordListId)}.\nClick to open in voc.com.`,
+          `'${firstWord}' added successfully`,
+          `'${firstWord}' was added to ${vocapi.getListNameSync(wordListId)}.\nClick to open in voc.com.`,
           () => {
-            chrome.tabs.create({url: `https://www.vocabulary.com/dictionary/${wordToSave}`});
+            chrome.tabs.create({url: `https://www.vocabulary.com/dictionary/${firstWord}`});
           }); 
         }
     })
