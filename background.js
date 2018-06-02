@@ -89,7 +89,7 @@ function parseVoclist(inputStr) {
 		if (match[2]) { // the word was quoted with '<word>'
 			word.word = match[2];
 		} else {
-			word.word = match[1];
+			word.word = match[1].toLowerCase();
 		}
 		// description present
 		if (match[4]) {
@@ -118,7 +118,7 @@ function checkSelection(selection) {
 // returns an onlick function for the Add To... context menu
 function addToF(wordListId) {
   return (info, tab) => {
-    let words = parseVoclist(info.selectionText.toLowerCase());
+    let words = parseVoclist(info.selectionText);
     vocapi.addToList(words, wordListId)
     .then( () => {
       // send notification
