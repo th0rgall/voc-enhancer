@@ -11,15 +11,16 @@ function getSelectedText() {
 }
 
 // incoming connection
-chrome.runtime.onConnect.addListener((port) => {
-    if (port.name === 'vocadder-back') {
-      port.onMessage.addListener(({type: type}) => {
-        if (type === 'addtoNew') {
-          let name = getName();
-          if (name) port.postMessage({type: 'addtoNew', name: name});
-        }
-      });
-    }
+chrome.runtime.onMessage.addListener(
+  function(request, sender, sendResponse) {
+    if (!sender.tab) { // message from extension
+      if (request.type === 'addtoNew') {
+        let name = getName();
+        if (name) sendResponse({type: 'addtoNew', name: name});
+      }
+    };
+    if (request.greeting == "hello")
+      sendResponse({farewell: "goodbye"});
   });
 
 function getName() {
@@ -31,16 +32,13 @@ function getName() {
           alert("Fill in a non-empty name. Try again.");
         }
       } else {
-        // canceled
+        // cancelled
       }
 }
 
-// outgoing
-let port = chrome.runtime.connect({name: 'vocadder'});
-
 // on page init: always check for login state
 document.addEventListener('load', () => {
-    port.postMessage({
+    chrome.runtime.sendMessage({
         type: 'checkLogin'
     });
 })
@@ -48,7 +46,7 @@ document.addEventListener('load', () => {
 document.addEventListener('selectionchange', () => {
     const text = getSelectedText();
     if (text) {
-        port.postMessage({
+        chrome.runtime.sendMessage({
             type: 'selection',
             selection: text
         });

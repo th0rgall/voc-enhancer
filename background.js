@@ -22,20 +22,20 @@ function checkLogin() {
 }
 
 // incoming connection
-chrome.runtime.onConnect.addListener((port) => {
-  if (port.name === 'vocadder') {
-    port.onMessage.addListener(({type: type, selection: selection}) => {
-      if (type === 'checkLogin') {
-        checkLogin();
-      } else if (type === 'selection') {
-        checkSelection(selection);
-      }
-    });
-  }
-});
+chrome.runtime.onMessage.addListener(
+  ({type: type, selection: selection}, sender, sendResponse) => {
+    if (type === 'checkLogin') {
+      checkLogin();
+    } else if (type === 'selection') {
+      checkSelection(selection);
+    }
+  });
 
-// outgoing connection
-let outPort;
+function sendToActiveTab(message, callback) {
+  chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+    chrome.tabs.sendMessage(tabs[0].id, message, callback);
+  });
+} 
 
 loggedIn = false;
 checkLogin();
@@ -175,33 +175,25 @@ function startLearningWord(wordToLearn) {
 }
 
 function addToNewHandler(info, tab) {
-
-  // set up outgoing port
-  chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-    outPort = chrome.tabs.connect(tabs[0].id, {name: "vocadder-back"});
-
-    // becomes invalid after response
-    outPort.onMessage.addListener(function(msg) {
-      if (msg.type === 'addtoNew') {
-        const words = parseVoclist(info.selectionText);
-        const listName = msg.name;
-        vocapi.addToNewList(words, listName, '', false)
-        .then((response) => {
-          // send notification
-          let listId = response.result;
-          const notificationId = `add-words-to-${listId}`;
-          createNotification(notificationId,
-            `'${listName}' was created successfully`,
-            // TODO might not be correct if not all words were legal
-            `'${words.length}' words were added to ${listName}.\nClick to open in voc.com.`,
-            () => {
-              chrome.tabs.create({url: `https://www.vocabulary.com/lists/${listId}`});
-            });
-        })
-        .catch(logError);
-      }
-    });
-    outPort.postMessage({type: 'addtoNew'});
+  sendToActiveTab({type: 'addtoNew'}, msg => {
+    if (msg.type === 'addtoNew') {
+      const words = parseVoclist(info.selectionText);
+      const listName = msg.name;
+      vocapi.addToNewList(words, listName, '', false)
+      .then((response) => {
+        // send notification
+        let listId = response.result;
+        const notificationId = `add-words-to-${listId}`;
+        createNotification(notificationId,
+          `'${listName}' was created successfully`,
+          // TODO might not be correct if not all words were legal
+          `'${words.length}' words were added to ${listName}.\nClick to open in voc.com.`,
+          () => {
+            chrome.tabs.create({url: `https://www.vocabulary.com/lists/${listId}`});
+          });
+      })
+      .catch(logError);
+    }
   });
 }
 

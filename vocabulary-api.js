@@ -88,6 +88,7 @@ class VocAPI {
                     }
                     else if (req.status != 200) {
                         console.log(`Error: ` + req.responseText);
+                        detachHook();
                         reject();
                     }
                 }
@@ -117,6 +118,7 @@ class VocAPI {
                     resolve(req.responseText);
                 }
                 else if (req.status != 200) {
+                    detachHook();
                     reject();
                     console.log(`Error: ` + req.responseText);
                 }
@@ -173,6 +175,7 @@ class VocAPI {
                     resolve(req.responseText);
                 }
                 else if (req.status != 200) {
+                    detachHook();
                     reject(req.responseText);        
                     console.log(`Error: ` + req.responseText);
                 }
@@ -193,9 +196,9 @@ class VocAPI {
     * @param shared boolean that shows whether list should be shared or not
     */ 
     addToNewList(words, listName, description, shared) {
-        return Promise((resolve, reject) => {
+        return new Promise((resolve, reject) => {
             const refererUrl = `${this.URLBASE}/lists/vocabgrabber`; 
-            const requestUrl = `${this.URLBASE}lists/save.json`;
+            const requestUrl = `${this.URLBASE}/lists/save.json`;
           
             let listObj = {
               //"words": words.map((w) => { return {"word": w} }),
@@ -216,11 +219,12 @@ class VocAPI {
               req.onload = function () {
                 if (req.status == 200) {
                     console.log(req.response);
-                    resolve(req.response);                    
                     detachHook();
+                    resolve(req.response);                    
                 } else if (req.status != 200) {
-                  console.log(`Error: ` + req.response);
-                  reject(req.response);
+                    detachHook()
+                    console.log(`Error: ` + req.response);
+                    reject(req.response);
                 }
                }
               req.send(VocAPI.getFormData({'wordlist': JSON.stringify(listObj)}));
