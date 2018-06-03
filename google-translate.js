@@ -76,13 +76,14 @@ var window = {
     TKK: config.get('TKK') || '0'
 };
 */
-localStorage.setItem('TKK', localStorage.get('TKK') || '0');
+localStorage.setItem('TKK', localStorage.getItem('TKK') || '0');
 
-function httpGet(requestUrl) {
-    return Promise( (resolve, reject) => {
+function httpGet(requestUrl, type) {
+    return new Promise( (resolve, reject) => {
         var req = new XMLHttpRequest();
+        //req.withCredentials = true;
         req.open("GET", requestUrl, true);
-        req.responseType = "document";
+        req.responseType = type ? type : "document";
         req.onload = function () {
           if (req.status == 200) {
               resolve(req.response);
@@ -105,7 +106,8 @@ function updateTKK() {
         } else {
             //got('https://translate.google.com').then(function (res) {
             httpGet('https://translate.google.com').then(function (res) {
-                var code = res.body.match(/TKK=(.*?)\(\)\)'\);/g);
+                // var code = res.body.match(/TKK=(.*?)\(\)\)'\);/g);
+                var code = res.body.innerHTML.match(/TKK=(.*?)\(\)\)'\);/g);
 
                 if (code) {
                     eval(code[0]);
@@ -134,7 +136,7 @@ function updateTKK() {
     });
 }
 
-function get(text) {
+function getGoogleToken(text) {
     return updateTKK().then(function () {
         var tk = sM(text);
         tk = tk.replace('&tk=', '');
@@ -145,3 +147,126 @@ function get(text) {
 }
 
 // module.exports.get = get;
+
+/**
+ * API based on: https://github.com/matheuss/google-translate-api/blob/master/index.js
+ */
+
+/**
+ * from: https://github.com/Gozala/querystring/blob/master/encode.js
+ */
+function stringifyPrimitive(v) {
+    switch (typeof v) {
+      case 'string':
+        return v;
+  
+      case 'boolean':
+        return v ? 'true' : 'false';
+  
+      case 'number':
+        return isFinite(v) ? v : '';
+  
+      default:
+        return '';
+    }
+  };
+
+function stringify(obj, sep, eq, name) {
+    sep = sep || '&';
+    eq = eq || '=';
+    if (obj === null) {
+      obj = undefined;
+    }
+  
+    if (typeof obj === 'object') {
+      return Object.keys(obj).map(function(k) {
+        var ks = encodeURIComponent(stringifyPrimitive(k)) + eq;
+        if (Array.isArray(obj[k])) {
+          return obj[k].map(function(v) {
+            return ks + encodeURIComponent(stringifyPrimitive(v));
+          }).join(sep);
+        } else {
+          return ks + encodeURIComponent(stringifyPrimitive(obj[k]));
+        }
+      }).filter(Boolean).join(sep);
+  
+    }
+  
+    if (!name) return '';
+    return encodeURIComponent(stringifyPrimitive(name)) + eq +
+           encodeURIComponent(stringifyPrimitive(obj));
+  };
+
+function translate(text, opts) {
+    opts = opts || {};
+
+    var e;
+    [opts.from, opts.to].forEach(function (lang) {
+        if (lang && !isSupported(lang)) {
+            e = new Error();
+            e.code = 400;
+            e.message = 'The language \'' + lang + '\' is not supported';
+        }
+    });
+    if (e) {
+        return new Promise(function (resolve, reject) {
+            reject(e);
+        });
+    }
+
+    opts.from = opts.from || 'auto';
+    opts.to = opts.to || 'en';
+
+    opts.from = getCode(opts.from);
+    opts.to = getCode(opts.to);
+
+    return getGoogleToken(text).then(function (token) {
+        var url = 'https://translate.google.com/translate_a/single';
+        /*
+        var data = {
+            client: 't',
+            sl: opts.from,
+            tl: opts.to,
+            hl: opts.to,
+            dt: ['at', 'bd', 'ex', 'ld', 'md', 'qca', 'rw', 'rm', 'ss', 't'],
+            ie: 'UTF-8',
+            oe: 'UTF-8',
+            otf: 1,
+            ssel: 0,
+            tsel: 0,
+            kc: 7,
+            q: text
+        };
+        */
+        var data = {
+            client: 'gtx',
+            sl: opts.from,
+            tl: opts.to,
+            hl: opts.to,
+            dt: ['t', 'bd'],
+            dj: '1',
+            source: 'icon',
+            q: text
+        };
+        data[token.name] = token.value;
+
+        return url + '?' + stringify(data);
+    }).then(function (url) {
+        return httpGet(url, 'json').then(function (res) {
+            var result = {
+                text: res.sentences[0].trans
+            };
+
+            return result;
+        }).catch(function (err) {
+            var e;
+            e = new Error();
+            if (err && err.statusCode !== undefined && err.statusCode !== 200) {
+                e.code = 'BAD_REQUEST';
+            } else {
+                e.code = 'BAD_NETWORK';
+            }
+            throw e;
+        });
+    });
+}

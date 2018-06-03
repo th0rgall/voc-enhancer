@@ -55,15 +55,12 @@ function initialize() {
         // get word
         let word = descriptionParent.parentElement.parentElement.parentElement.dataset.word;
 
-        /**
         // insert translation
         translate(word, {from: 'en', to: 'nl'}).then(res => {
             insertTranslation(descriptionParent, res.text);
         }).catch(err => {
             console.error(err);
         });
-        */
-        insertTranslation(descriptionParent, 'WURD')
     }, '.questionPane');
 
 }

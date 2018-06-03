@@ -18,7 +18,7 @@
         "js": ["vocadder-content.js"]
     }, {
         "matches": ["*://*.vocabulary.com/", "*://*.vocabulary.com/play/", "*://www.vocabulary.com/lists/*/practice"],
-        "js": ["translation-injector.js"]
+        "js": ["languages.js", "google-translate.js", "translation-injector.js"]
     }
     ],
     "permissions": [
