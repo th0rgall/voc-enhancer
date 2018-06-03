@@ -78,22 +78,69 @@ var window = {
 */
 localStorage.setItem('TKK', localStorage.getItem('TKK') || '0');
 
-function httpGet(requestUrl, type) {
+function withModifiedReferrer(refererUrl, requestUrl, action) {
+    function refererListener(details) {
+        const i = details.requestHeaders.findIndex(e => e.name.toLowerCase() == "referer");
+        if (i != -1) {
+            details.requestHeaders[i].value = refererUrl;
+        } else {
+            details.requestHeaders.push({name: "referer", value: refererUrl});
+        }
+        // Firefox uses promises
+        // return Promise.resolve(details);
+        // Chrome doesn't. Todo: https://github.com/mozilla/webextension-polyfill
+    
+        // important: do create a new object, passing the modified argument does not work
+        return {requestHeaders: details.requestHeaders};
+    }
+
+    // modify headers with webRequest hook
+    chrome.webRequest.onBeforeSendHeaders.addListener(
+    refererListener, //  function
+    {urls: [requestUrl]}, // RequestFilter object
+    ["requestHeaders", "blocking"] //  extraInfoSpec
+    );
+
+    // TODO:    why not hook detach after action? async?
+    //          hook should be detached after the request was sent, automatically   
+    action(() => {
+    // detach hook
+    if (chrome.webRequest.onBeforeSendHeaders.hasListener(refererListener)) {
+        chrome.webRequest.onBeforeSendHeaders.removeListener(refererListener)
+    }
+    });
+}
+
+function httpGet(requestUrl, type, modifiedReferrer) {
     return new Promise( (resolve, reject) => {
-        var req = new XMLHttpRequest();
-        //req.withCredentials = true;
-        req.open("GET", requestUrl, true);
-        req.responseType = type ? type : "document";
-        req.onload = function () {
-          if (req.status == 200) {
-              resolve(req.response);
-          }
-          else if (req.status != 200) {
-              reject()
-          }
-         }
-        req.send();
-    })
+        let action = (detachHook) => {
+            var req = new XMLHttpRequest();
+            //req.withCredentials = true;
+            req.open("GET", requestUrl, true);
+            req.responseType = type ? type : "document";
+            req.onload = function () {
+                if (detachHook) detachHook();
+                if (req.status == 200) {
+                    resolve(req.response);
+                }
+                else if (req.status != 200) {
+                    reject();
+                }
+             }
+            req.send();
+        }
+        if (modifiedReferrer) {
+            chrome.runtime.sendMessage({
+                type: 'translation',
+                referrer: modifiedReferrer,
+                url: requestUrl
+            }, (res) => {
+                resolve(res);
+            });
+        } else {
+            action();
+        }
+    });
 }
 
 function updateTKK() {
@@ -252,7 +299,7 @@ function translate(text, opts) {
 
         return url + '?' + stringify(data);
     }).then(function (url) {
-        return httpGet(url, 'json').then(function (res) {
+        return httpGet(url, 'json', 'https://www.google.be/').then(function (res) {
             var result = {
                 text: res.sentences[0].trans
             };

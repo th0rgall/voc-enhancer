@@ -23,11 +23,16 @@ function checkLogin() {
 
 // incoming connection
 chrome.runtime.onMessage.addListener(
-  ({type: type, selection: selection}, sender, sendResponse) => {
+  (msg, sender, sendResponse) => {
+    let type = msg.type;
+    let selection = msg.selection;
     if (type === 'checkLogin') {
       checkLogin();
     } else if (type === 'selection') {
       checkSelection(selection);
+    } else if (type === 'translation') {
+      VocAPI.translation(msg.url, msg.referrer).then((res) => sendResponse(res));
+      return true;
     }
   });
 

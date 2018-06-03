@@ -276,6 +276,28 @@ class VocAPI {
         });
     }
 
+    static translation(requestUrl, modifiedReferrer) {
+        return new Promise((resolve, reject) => {
+            let action = (detachHook) => {
+                var req = new XMLHttpRequest();
+                req.withCredentials = false;
+                req.open("GET", requestUrl, true);
+                req.responseType = 'json';
+                req.onload = function () {
+                    if (detachHook) detachHook();
+                    if (req.status == 200) {
+                        resolve(req.response);
+                    }
+                    else if (req.status != 200) {
+                        reject();
+                    }
+                 }
+                req.send();
+            };
+            VocAPI.withModifiedReferrer(modifiedReferrer, requestUrl, action);
+        });
+    }
+
     /**
      * Execute an function with a modified Referer header for browser requests
      * @param {*} refererUrl the referer URL that will be injected
