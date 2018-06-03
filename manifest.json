@@ -15,8 +15,12 @@
     },
     "content_scripts": [{
         "matches": ["*://*/*"],
-        "js": ["content.js"]
-    }],
+        "js": ["vocadder-content.js"]
+    }, {
+        "matches": ["*://*.vocabulary.com/", "*://*.vocabulary.com/play/", "*://www.vocabulary.com/lists/*/practice"],
+        "js": ["translation-injector.js"]
+    }
+    ],
     "permissions": [
         "contextMenus",
         "activeTab",

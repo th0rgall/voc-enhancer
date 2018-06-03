@@ -1,5 +1,8 @@
 /** 
- * Promise based API interfacefor Vocabulary.com
+ * Promise based API interface for Vocabulary.com
+ * 
+ * Uses Vocabulary.com's unofficial JSON API where possible.
+ * Falls back on HTML extraction for definitions and word list content.
  * */
 class VocAPI {
 
@@ -52,6 +55,47 @@ class VocAPI {
         if (id in this.listNameCache) {
             return this.listNameCache[id];
         } 
+    }
+
+    /**
+     * @returns definition in the format
+     * 
+     * {
+     *  "word": string,
+     *  "definition", string      // primary definition (as given by the meta description tag)
+     *  "description": string     // the long format description unique to Vocabulary.com
+     *  "audioURL": string        // of the form https://audio.vocab.com/1.0/us/C/12RWPXAD427B5.mp3
+     *                               // with C/.... being the code, in data-audio on the element
+     *                               // document.querySelector('.audio')
+     *  "meanings": [       // categories of meanings
+     *      {                   // specific meaning
+     *          "forms": [          // different forms
+     *              {
+     *                  "pos": string,          // part of speech: v, n, ...                
+     *                  "definition": string,
+     *                  "synonyms": [ synonym ],           // TODO: kunnen ook meerdere zijn?
+     *                  "subtypes": [                      // subtypes of the word
+     *                      { "words": [ string ],   // subtypes
+     *                        "defintition": string:
+     *                      }
+     *                  "supertypes":                   // TODO: only 1?
+     *                  {
+     *                       "words": [ string ]
+     *                       "definition": string
+     *                  }
+     *              }
+     *            ]
+     *         }     
+     *      ]
+     *    }
+     *  ]
+     * }
+     * 
+     * Primary meanings are, for every meaning, the first form of a given part of speech
+     */
+    getDefinition(word) {
+        /* stub */
+        return "Not implemented."
     }
 
     /**
@@ -284,5 +328,4 @@ class VocAPI {
         Object.keys(object).forEach((key, index) => returnString += `${index === 0 ? '' : '&'}${key}=${encodeURIComponent(object[key])}`)
         return returnString;
         }
-
 }
