@@ -2,8 +2,7 @@ default: dist
 
 dev: clean
 	@if [ ! -d "out" ]; then mkdir -p out; fi
-	@cp -R manifest.json vocabulary-api.js background.js vocadder-content.js icons out/
-	# @browserify translation-injector.js -o out/translation-injector.js
+	@cp -R manifest.json api content icons background.js out/
 
 dist: clean dev
 	@cd out && find . -path '*/.*' -prune -o -type f -print | zip ../voc-adder.zip -@

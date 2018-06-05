@@ -1,9 +1,9 @@
 {
     "manifest_version": 2,
-    "name": "Voc.com adder",
+    "name": "Vocabulary.com Enhancer (unofficial)",
     "author": "Thor Galle",
-    "version": "0.2.1",
-    "description": "Add selected words to your vocabulary.com lists.",
+    "version": "0.3.1",
+    "description": "Show translations in the word game. Right-click add selected words.",
     "icons": {
         "16": "icons/favicon-16x16.png",
         "32": "icons/favicon-32x32.png",
@@ -11,14 +11,17 @@
         "114": "icons/favicon-114x114.png"
     },
     "background": {
-        "scripts": ["vocabulary-api.js", "background.js"]
+        "scripts": ["api/vocabulary-api.js", "background.js"]
     },
     "content_scripts": [{
         "matches": ["*://*/*"],
-        "js": ["vocadder-content.js"]
+        "js": ["content/voc-adder.js"]
     }, {
         "matches": ["*://*.vocabulary.com/", "*://*.vocabulary.com/play/", "*://www.vocabulary.com/lists/*/practice"],
-        "js": ["languages.js", "google-translate.js", "translation-injector.js"]
+        "js": ["api/languages.js", "api/google-translate.js", "content/quiz-injector.js", "content/common.js"]
+    }, {
+        "matches": ["*://*.vocabulary.com/dictionary/*"],
+        "js": ["api/languages.js", "api/google-translate.js", "content/definition-injector.js", "content/common.js"]
     }
     ],
     "permissions": [
