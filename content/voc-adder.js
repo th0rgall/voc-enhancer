@@ -65,7 +65,8 @@ function getSurroundingSentence() {
       // (but what if a capital name enters somewhere?...) --> lookbehind could be a solution, but not supported
       // for the moment: [^\s] : no space before the capital letter
       // to be tolerant: sentence can also start at the end of another sentence
-      let sentenceReg = new RegExp(`(\\.\\s{1,3}|[^\\s][A-Z])[^\\.]*(${regWord}|${regWordDecapitated})[^\\.]*\\.`);
+      // TODO: trim in between
+      let sentenceReg = new RegExp(`(\\.\\s{1,3}|([^\\s]|^)[A-Z])[^\\.]*(${regWord}|${regWordDecapitated})[^\\.]*\\.`);
 
 
       let sentence = selectionNode.textContent;
