@@ -72,46 +72,66 @@ function createContextMenus() {
   .catch(logError);
 }
 
-function parseVoclist(inputStr) {
-	/* 
-	* start of string
-	* greedy whitespace
-	* word
-	* greedy whitespace
-	* optional extension (= description and/or example):
-	*  -: start of extension
-	*  description: everything except , (one line mode) or newlines
-	*  also optional: example, signaled by a quote
-	*/
-	let reg = /\s*(\w+|'([^']+)')\s*(-\s*([^,\r\n]*))?(,?\s*"([^"]*)")?/g
-
-	let words = [];
-	let match;
-	let word;
-	while (match = reg.exec(inputStr)) {
-		word = {};
-		// word
-		if (match[2]) { // the word was quoted with '<word>'
-			word.word = match[2];
-		} else {
-			word.word = match[1].toLowerCase();
-		}
-		// description present
-		if (match[4]) {
-			word.description = match[4];
-		}
-		// example present
-		if (match[6]) {
-			word.example = match[6];
-		}
-		words.push(word);	
-	}
-	return words;
+/**
+ * 
+ * @param {*} inputStr 
+ * @param {*} synchronous optional: if synchronous, it will not gather a surrounding sentence for a single word
+ */
+function parseVoclist(inputStr, synchronous) {
+    /* 
+    * start of string
+    * greedy whitespace
+    * word
+    * greedy whitespace
+    * optional extension (= description and/or example):
+    *  -: start of extension
+    *  description: everything except , (one line mode) or newlines
+    *  also optional: example, signaled by a quote
+    */
+    let reg = /\s*(\w+|'([^']+)')\s*(-\s*([^,\r\n]*))?(,?\s*"([^"]*)")?/g
+    
+    let words = [];
+    let match;
+    let word;
+    while (match = reg.exec(inputStr)) {
+      word = {};
+      // word
+      if (match[2]) { // the word was quoted with '<word>'
+        word.word = match[2];
+      } else {
+        word.word = match[1].toLowerCase();
+      }
+      // description present
+      if (match[4]) {
+        word.description = match[4];
+      }
+      // example present
+      if (match[6]) {
+        word.example = match[6];
+      }
+      words.push(word);	
+    }
+      
+    if (!synchronous) {
+      return new Promise((resolve, reject) => {
+        if (words.length === 1) {
+          sendToActiveTab({type: 'sentence'}, (sentenceObj) => {
+            words[0].sentence = sentenceObj.sentence;
+            words[0].location = sentenceObj.location;
+            resolve(words);
+          });
+        } else {
+          resolve(words);
+        }
+      });
+    } else {
+      return words;
+    }
 }
 
 // update context menu entry when selection contains more words
 function checkSelection(selection) {
-  const words = parseVoclist(selection);
+  const words = parseVoclist(selection, true);
   if (words.length > 1) {
     chrome.contextMenus.update('addtoParent', {title: `voc.com: add ${words.length} words to...`});
   } else {
@@ -123,35 +143,36 @@ function checkSelection(selection) {
 // returns an onlick function for the Add To... context menu
 function addToF(wordListId) {
   return (info, tab) => {
-    let words = parseVoclist(info.selectionText);
-    vocapi.addToList(words, wordListId)
-    .then( () => {
-      // send notification
-      const firstWord = words[0].word;
-      const notificationId = `add-${firstWord}-to-${wordListId}`;
-      if (words.length > 1) {
-        createNotification(notificationId,
-          `'${words.length}' words added succesfully`,
-          `'${words.length}' words were added to ${vocapi.getListNameSync(wordListId)}.\nClick to open in voc.com.`,
-          () => {
-            chrome.tabs.create({url: `https://www.vocabulary.com/lists/${wordListId}`});
-          });
-      } else {
-        createNotification(notificationId,
-          `'${firstWord}' added successfully`,
-          `'${firstWord}' was added to ${vocapi.getListNameSync(wordListId)}.\nClick to open in voc.com.`,
-          () => {
-            chrome.tabs.create({url: `https://www.vocabulary.com/dictionary/${firstWord}`});
-          }); 
-        }
-    })
-    .catch(logError);
+    parseVoclist(info.selectionText).then((words) => {
+      vocapi.addToList(words, wordListId)
+      .then( () => {
+        // send notification
+        const firstWord = words[0].word;
+        const notificationId = `add-${firstWord}-to-${wordListId}`;
+        if (words.length > 1) {
+          createNotification(notificationId,
+            `'${words.length}' words added succesfully`,
+            `'${words.length}' words were added to ${vocapi.getListNameSync(wordListId)}.\nClick to open in voc.com.`,
+            () => {
+              chrome.tabs.create({url: `https://www.vocabulary.com/lists/${wordListId}`});
+            });
+        } else {
+          createNotification(notificationId,
+            `'${firstWord}' added successfully`,
+            `'${firstWord}' was added to ${vocapi.getListNameSync(wordListId)}.\nClick to open in voc.com.`,
+            () => {
+              chrome.tabs.create({url: `https://www.vocabulary.com/dictionary/${firstWord}`});
+            }); 
+          }
+      })
+      .catch(logError);
+    });
   }
 }
 
 // only used for start learning multiple words...
 function addAll(selectionText, addFunction) {
-  const words = parseVoclist(selectionText);
+  const words = parseVoclist(selectionText, true);
   if (words.length > 1) {
       words.forEach(addFunction);
   } else if (words.length === 1) {
@@ -182,22 +203,23 @@ function startLearningWord(wordToLearn) {
 function addToNewHandler(info, tab) {
   sendToActiveTab({type: 'addtoNew'}, msg => {
     if (msg.type === 'addtoNew') {
-      const words = parseVoclist(info.selectionText);
-      const listName = msg.name;
-      vocapi.addToNewList(words, listName, '', false)
-      .then((response) => {
-        // send notification
-        let listId = response.result;
-        const notificationId = `add-words-to-${listId}`;
-        createNotification(notificationId,
-          `'${listName}' was created successfully`,
-          // TODO might not be correct if not all words were legal
-          `'${words.length}' words were added to ${listName}.\nClick to open in voc.com.`,
-          () => {
-            chrome.tabs.create({url: `https://www.vocabulary.com/lists/${listId}`});
-          });
-      })
-      .catch(logError);
+      parseVoclist(info.selectionText).then((words) => {
+        const listName = msg.name;
+        vocapi.addToNewList(words, listName, '', false)
+        .then((response) => {
+          // send notification
+          let listId = response.result;
+          const notificationId = `add-words-to-${listId}`;
+          createNotification(notificationId,
+            `'${listName}' was created successfully`,
+            // TODO might not be correct if not all words were legal
+            `'${words.length}' words were added to ${listName}.\nClick to open in voc.com.`,
+            () => {
+              chrome.tabs.create({url: `https://www.vocabulary.com/lists/${listId}`});
+            });
+        })
+        .catch(logError);
+      });
     }
   });
 }

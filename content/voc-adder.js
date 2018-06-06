@@ -17,10 +17,14 @@ chrome.runtime.onMessage.addListener(
       if (request.type === 'addtoNew') {
         let name = getName();
         if (name) sendResponse({type: 'addtoNew', name: name});
+      } else if (request.type === 'sentence') {
+          sendResponse({
+            type: 'sentence', 
+            sentence: getSurroundingSentence(), 
+            location: window.location.href
+          });
       }
     };
-    if (request.greeting == "hello")
-      sendResponse({farewell: "goodbye"});
   });
 
 function getName() {
@@ -67,7 +71,7 @@ function getSurroundingSentence() {
       let sentence = selectionNode.textContent;
       let hopCount = 0;
       let match = sentenceReg.exec(sentence);
-      while (sentence && !match && hopCount < 5) {
+      while (sentence && !match && hopCount < 3) {
         selectionNode = selectionNode.parentElement;
         sentence = selectionNode.textContent;
         match = sentenceReg.exec(sentence);
@@ -76,8 +80,15 @@ function getSurroundingSentence() {
 
       if (match)  {
           // might have matched too much. A second pass in order to keep the regex above cleaner...
-          const rawMatch = match[0];
-          let fineMatch = /\.\s{1,3}(.*)/.exec(rawMatch);
+          let rawMatch = match[0];
+          // clean up match: replace line breaks between letters
+          rawMatch = rawMatch.replace(/\w[\n\r]\w/g, (x) => {
+            return x[0] + ' ' + x[x.length - 1];
+          });
+          // clean up match: remove line breaks in general
+          rawMatch = rawMatch.replace(/[\n\r]/g, ' ');
+          // . does not match newlines! [\s\S] matches everything
+          let fineMatch = /^\.\s{1,3}([\s\S]*)$/.exec(rawMatch);
           if (fineMatch) {
             return fineMatch[1];
           } else {
@@ -92,6 +103,9 @@ function getSurroundingSentence() {
 document.addEventListener('selectionchange', ()=> {
     const text = getSelectedText();
     if (text) {
+        // TODO: this is initiated for every selection now.
+        // Is there no context-menu event in the background that spawns when context menu's can still be modified?
+        // Then it could be requested.
         chrome.runtime.sendMessage({
             type: 'selection',
             selection: text,
