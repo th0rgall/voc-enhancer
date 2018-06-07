@@ -81,14 +81,14 @@ function parseVoclist(inputStr, synchronous) {
     /* 
     * start of string
     * greedy whitespace
-    * word
+    * word char or - TODO: also ' as in Bailey's or something
     * greedy whitespace
     * optional extension (= description and/or example):
     *  ':' : start of extension
     *  description: everything except , (one line mode) or newlines
     *  also optional: example, signaled by a quote
     */
-    let reg = /\s*(\w+|'([^']+)')\s*(\:\s*([^,\r\n]*))?(,?\s*"([^"]*)")?/g
+    let reg = /\s*([\w-]+|'([^']+)')\s*(\:\s*([^,\r\n]*))?(,?\s*"([^"]*)")?/g
     
     let words = [];
     let match;
