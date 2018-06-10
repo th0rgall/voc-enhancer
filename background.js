@@ -145,20 +145,20 @@ function addToF(wordListId) {
   return (info, tab) => {
     parseVoclist(info.selectionText).then((words) => {
       vocapi.addToList(words, wordListId)
-      .then( () => {
+      .then( (result) => {
         // send notification
-        const firstWord = words[0].word;
+        const firstWord = result.corrected ? result.corrected : result.original;
         const notificationId = `add-${firstWord}-to-${wordListId}`;
         if (words.length > 1) {
           createNotification(notificationId,
-            `'${words.length}' words added succesfully`,
-            `'${words.length}' words were added to ${vocapi.getListNameSync(wordListId)}.\nClick to open in voc.com.`,
+            `${words.length} words added`,
+            `${words.length} words were added to ${vocapi.getListNameSync(wordListId)}.\nClick to open in voc.com.`,
             () => {
               chrome.tabs.create({url: `https://www.vocabulary.com/lists/${wordListId}`});
             });
         } else {
           createNotification(notificationId,
-            `'${firstWord}' added successfully`,
+            `'${firstWord}' added`,
             `'${firstWord}' was added to ${vocapi.getListNameSync(wordListId)}.\nClick to open in voc.com.`,
             () => {
               chrome.tabs.create({url: `https://www.vocabulary.com/dictionary/${firstWord}`});
