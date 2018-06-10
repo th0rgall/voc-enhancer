@@ -228,7 +228,7 @@ function addToNewHandler(info, tab) {
 function createNotification(notificationId, title, message, onClick) {
   chrome.notifications.create(notificationId, {
     type: "basic",
-    iconUrl: "voc_favicon.png",
+    iconUrl: "icons/favicon-114x114.png",
     title: title,
     message: message
   });
