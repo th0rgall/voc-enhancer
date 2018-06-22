@@ -116,8 +116,10 @@ function parseVoclist(inputStr, synchronous) {
       return new Promise((resolve, reject) => {
         if (words.length === 1) {
           sendToActiveTab({type: 'sentence'}, (sentenceObj) => {
-            words[0].sentence = sentenceObj.sentence;
-            words[0].location = sentenceObj.location;
+            if (sentenceObj) {
+              words[0].sentence = sentenceObj.sentence;
+              words[0].location = sentenceObj.location;
+            }
             resolve(words);
           });
         } else {
