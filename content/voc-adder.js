@@ -21,7 +21,8 @@ chrome.runtime.onMessage.addListener(
           sendResponse({
             type: 'sentence', 
             sentence: getSurroundingSentence(), 
-            location: window.location.href
+            location: window.location.href,
+            title: document.title ? document.title : undefined
           });
       }
     };
@@ -101,7 +102,7 @@ function getSurroundingSentence() {
   }
 }
 
-document.addEventListener('selectionchange', ()=> {
+document.addEventListener('selectionchange', () => {
     const text = getSelectedText();
     if (text) {
         // TODO: this is initiated for every selection now.
@@ -110,7 +111,6 @@ document.addEventListener('selectionchange', ()=> {
         chrome.runtime.sendMessage({
             type: 'selection',
             selection: text,
-            sentence: getSurroundingSentence()
         });
     }
 })
