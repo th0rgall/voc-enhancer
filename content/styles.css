@@ -36,5 +36,21 @@
 .ve-external-link:hover > img {
     transition: all .3s;
     filter: grayscale(0);
-    opacity: 0.8;
+    opacity: 0.9;
+}
+
+/* Quiz injection */
+.ve-quiz-injection {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+}
+
+.ve-quiz-injection > .ve-links {
+    margin-right: 2em;
+    margin-top: 0.5em;
+}
+
+.ve-quiz-injection .ve-external-link > img {
+    opacity: 0.5;
 }

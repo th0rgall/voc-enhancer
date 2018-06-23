@@ -10,6 +10,7 @@ function createTranslation(word) {
 
     // create translation element
     const translationEl = document.createElement('div');
+    translationEl.classList.add('ve-translation-container')
 
     const selectEl = document.createElement('select');
     selectEl.setAttribute('name', 'language-switcher');
@@ -79,6 +80,7 @@ const externalLinks = [
 
 function createLinks(word) {
     const container = document.createElement('span');
+    container.classList.add('ve-links');
     externalLinks.forEach(link => {
         const ref = document.createElement('a');
         ref.href = link.getLink(word);
