@@ -13,20 +13,11 @@ function createTranslation(word) {
 
     const selectEl = document.createElement('select');
     selectEl.setAttribute('name', 'language-switcher');
-    selectEl.style.width = '5rem';
+    selectEl.classList.add('ve-translation-selector');
     translationEl.appendChild(selectEl);
     
     const textContainer = document.createElement('p');
-    // would like to use .style, but not necessary properties all are available https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Properties_Reference
-    textContainer.style.cssText = `
-    display: inline;
-    font-size: 1.3em;
-    font-weight: 300;
-    font-style: italic;
-    margin-bottom: 0.7em;
-    margin-left: 0.7em;
-
-    `;
+    textContainer.classList.add('ve-translation');
     translationEl.appendChild(textContainer);
     const translationText = document.createTextNode(``);
     textContainer.appendChild(translationText);
@@ -68,20 +59,20 @@ function createTranslation(word) {
 const externalLinks = [
     {
         "title": 'DuckDuckGo Image Search',
-        "icon": 'icons/ddg.png',
+        "icon": 'icons/ddg-favicon.ico',
         "getLink": (w) => `https://duckduckgo.com/?q=${encodeURIComponent(w)}&t=ffab&iax=images&ia=images`
     }, {
         "title": 'Google Image Search',
-        "icon": 'icons/gi.png',
+        "icon": 'icons/google-favicon.ico',
         "getLink": (w) => `https://www.google.com/search?tbm=isch&q=${encodeURIComponent(w)}&tbs=imgo:1`
     }, {
         "title": 'GIPHY Image Search',
-        "icon": 'icons/giphy.png',
+        "icon": 'icons/giphy-favicon.png',
         "getLink": (w) => `https://giphy.com/search/${encodeURIComponent(w)}`
 
     }, {
         "title": 'YouGlish',
-        "icon": 'icons/yg.png',
+        "icon": 'icons/youglish-favicon.png',
         "getLink": (w) => `https://youglish.com/search/${encodeURIComponent(w)}`
     }
 ];
@@ -93,10 +84,11 @@ function createLinks(word) {
         ref.href = link.getLink(word);
         ref.target = '_blank';
         ref.rel = 'noopener noreferrer';
+        ref.classList.add('ve-external-link');
         container.appendChild(ref);
 
         const icon = document.createElement('img');
-        icon.src = link.icon;
+        icon.src = chrome.extension.getURL(link.icon);
         ref.appendChild(icon);
 
     });

@@ -1,0 +1,40 @@
+/* Translations */
+.ve-translation {
+    display: inline;
+    font-size: 1.3em;
+    font-weight: 300;
+    font-style: italic;
+    margin-bottom: 0.7em;
+    margin-left: 0.7em;
+}
+
+.ve-translation-selector {
+    width: 5rem;
+}
+
+/* Links */
+
+.ve-external-link {
+    display: inline-block;
+    width: 1.2em;
+    height: 1.2em;
+    margin: 0.1em;
+}
+
+/* voc.com css override */
+.wordlist.notesView a.word {
+    margin-right: 10px;
+}
+
+.ve-external-link > img {
+    width: 100%;
+    display: block;
+    filter: grayscale(1);
+    opacity: 0.3;
+}
+
+.ve-external-link:hover > img {
+    transition: all .3s;
+    filter: grayscale(0);
+    opacity: 0.8;
+}
