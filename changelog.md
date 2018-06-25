@@ -1,3 +1,7 @@
+### v0.3.6
+* language switcher only shows when clicking the current language
+* more detailed translations and alternatives. Hover for synonyms.
+
 ### v0.3.5
 * language switcher
 * links in wordlists to external resources like DuckDuckGo Image Search, Google Image Search, GIPHY and YouGlish
