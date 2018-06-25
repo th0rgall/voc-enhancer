@@ -35,14 +35,25 @@ function createTranslation(word) {
         translate(word, {from: 'en', to: target, pos: pos}).then(res => {
 
             const tDispFun = (t) => `${t.translation} (${t.pos})`;
+            const tAlts = (t) => `Alternatives:\n${t.alternatives.join('\n')}`;
 
+            // primary translation
             translationText.nodeValue = tDispFun(res.translations[0]);
+            textContainer.title = tAlts(res.translations[0]);
+            // additional translations
             if (res.translations.length > 1) {
                 const alts = document.createElement('span');
                 alts.classList.add('ve-translation-alternatives');
-                alts.appendChild(document.createTextNode(
-                    res.translations.slice(1).map(tDispFun).join(', ')
-                ));
+
+                let altTrans = res.translations.slice(1)
+                .map((trans, i, a) => {
+                    const span = document.createElement('span');
+                    let spanText = tDispFun(trans);
+                    if (i !== (a.length - 1))  spanText += ', ';
+                    span.appendChild(document.createTextNode(spanText));
+                    span.title = tAlts(trans); 
+                    return span;
+                }).forEach(span => alts.appendChild(span));
                 textContainer.appendChild(alts);
 
             }
