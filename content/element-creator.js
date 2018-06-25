@@ -20,13 +20,32 @@ function createTranslation(word) {
     const textContainer = document.createElement('p');
     textContainer.classList.add('ve-translation');
     translationEl.appendChild(textContainer);
-    const translationText = document.createTextNode(``);
+    const translationText = document.createTextNode('');
     textContainer.appendChild(translationText);
+
 
     const injectTranslation = (target) => {
         // insert translation
-        translate(word, {from: 'en', to: target}).then(res => {
-            translationText.nodeValue = res.text;
+
+        // get shown PoS
+        let domPos = document.querySelector('.challenge-slide:last-child');
+        let pos;
+        if (domPos) pos = JSON.parse(domPos.dataset.progress)[0].pos;
+
+        translate(word, {from: 'en', to: target, pos: pos}).then(res => {
+
+            const tDispFun = (t) => `${t.translation} (${t.pos})`;
+
+            translationText.nodeValue = tDispFun(res.translations[0]);
+            if (res.translations.length > 1) {
+                const alts = document.createElement('span');
+                alts.classList.add('ve-translation-alternatives');
+                alts.appendChild(document.createTextNode(
+                    res.translations.slice(1).map(tDispFun).join(', ')
+                ));
+                textContainer.appendChild(alts);
+
+            }
         }).catch(err => {
             console.error(err);
         });

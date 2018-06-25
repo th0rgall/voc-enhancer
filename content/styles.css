@@ -12,6 +12,12 @@
     width: 5rem;
 }
 
+.ve-translation-alternatives {
+	font-size: 0.8em;
+	margin-left: 0.6em;
+	color: #efefec;
+}
+
 /* Links */
 
 .ve-external-link {
