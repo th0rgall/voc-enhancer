@@ -16,11 +16,16 @@ function createTranslation(word) {
     selectEl.setAttribute('name', 'language-switcher');
     selectEl.classList.add('ve-translation-selector');
     translationEl.appendChild(selectEl);
+
+    const langLable = document.createElement('span');
+    selectEl.classList.add('ve-translation-label');
+    langLable.appendChild(document.createTextNode(''));
     
     const textContainer = document.createElement('p');
     textContainer.classList.add('ve-translation');
     translationEl.appendChild(textContainer);
     const translationText = document.createTextNode('');
+    textContainer.appendChild(langLable);
     textContainer.appendChild(translationText);
 
 
@@ -34,28 +39,42 @@ function createTranslation(word) {
 
         translate(word, {from: 'en', to: target, pos: pos}).then(res => {
 
-            const tDispFun = (t) => `${t.translation} (${t.pos})`;
-            const tAlts = (t) => `Alternatives:\n${t.alternatives.join('\n')}`;
+            const tDispFun = (t) => {
+                if (t.pos) {
+                    return `${t.translation} (${t.pos})`;
+                } else return t.translation;
+            }
+            const tAlts = (t) => { if (t.alternatives) return `Alternatives:\n${t.alternatives.join('\n')}`};
+
 
             // primary translation
             translationText.nodeValue = tDispFun(res.translations[0]);
             textContainer.title = tAlts(res.translations[0]);
+            // adjust label
+            langLable.childNodes[0].nodeValue = `${target.toUpperCase()}: `;
+            
             // additional translations
             if (res.translations.length > 1) {
+                // remove previous translations
+                let prevAlts = document.querySelector('.challenge-slide:last-child .ve-translation-alternatives');
+                if (prevAlts) prevAlts.remove();
                 const alts = document.createElement('span');
                 alts.classList.add('ve-translation-alternatives');
 
                 let altTrans = res.translations.slice(1)
                 .map((trans, i, a) => {
-                    const span = document.createElement('span');
-                    let spanText = tDispFun(trans);
-                    if (i !== (a.length - 1))  spanText += ', ';
-                    span.appendChild(document.createTextNode(spanText));
-                    span.title = tAlts(trans); 
-                    return span;
-                }).forEach(span => alts.appendChild(span));
+                    if (trans) {
+                        const span = document.createElement('span');
+                        let spanText = tDispFun(trans);
+                        if (i !== (a.length - 1))  spanText += ', ';
+                        span.appendChild(document.createTextNode(spanText));
+                        span.title = tAlts(trans); 
+                        return span;
+                    } else {
+                        return undefined;
+                    }
+                }).forEach(span => {if (span) return alts.appendChild(span)});
                 textContainer.appendChild(alts);
-
             }
         }).catch(err => {
             console.error(err);
@@ -79,8 +98,17 @@ function createTranslation(word) {
         if (selectedLan !== currentLan) {
             currentLan = selectedLan;
             injectTranslation(e.target.value);
+
         }
+        // hide the element & show label
+        selectEl.style.display = 'none';
+        langLable.style.display = 'inline';
     });
+
+    langLable.addEventListener('click', (e) => {
+        selectEl.style.display = 'inline';
+        langLable.style.display = 'none';
+    })
 
     injectTranslation(defaultLan);
 

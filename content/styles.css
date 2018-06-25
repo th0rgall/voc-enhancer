@@ -5,11 +5,13 @@
     font-weight: 300;
     font-style: italic;
     margin-bottom: 0.7em;
-    margin-left: 0.7em;
+    margin-left: 0em;
 }
 
 .ve-translation-selector {
     width: 5rem;
+    margin-right: 0.7em;
+    display: none;
 }
 
 .ve-translation-alternatives {
@@ -42,7 +44,7 @@
 .ve-external-link:hover > img {
     transition: all .3s;
     filter: grayscale(0);
-    opacity: 0.9;
+    opacity: 1;
 }
 
 /* Quiz injection */
@@ -60,3 +62,8 @@
 .ve-quiz-injection .ve-external-link > img {
     opacity: 0.5;
 }
+
+.ve-quiz-injection .ve-external-link:hover > img {
+    opacity: 1;
+}
+
