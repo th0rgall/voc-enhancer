@@ -18,6 +18,9 @@
         "js": ["content/voc-adder.js"],
         "css": ["content/styles.css"]
     }, {
+        "matches": ["*://*.vocabulary.com/*"],
+        "js": ["content/misc.js"]
+    },{
         "matches": ["*://*.vocabulary.com/", "*://*.vocabulary.com/play/", "*://www.vocabulary.com/lists/*/practice"],
         "js": ["api/languages.js", "api/google-translate.js", 
             "content/element-creator.js", "content/quiz-injector.js", "content/common.js"],
