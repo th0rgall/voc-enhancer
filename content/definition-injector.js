@@ -7,7 +7,7 @@ function initialize() {
         if (wordEl) {
             let word = wordEl.dataset.word;
             let defContainer = pageContent.querySelector('.definitionsContainer');
-            defContainer.insertBefore(createTranslation(word), defContainer.children[0]);
+            defContainer.insertBefore(createTranslation(word, 'dark'), defContainer.children[0]);
         }
     });
 }

@@ -3,7 +3,7 @@
  * Creates a translation DOM element.
  * @param word word to be translated
  */
-function createTranslation(word) {
+function createTranslation(word, color) {
 
     let defaultLan = 'nl';
     let currentLan = 'nl';
@@ -60,6 +60,9 @@ function createTranslation(word) {
                 if (prevAlts) prevAlts.remove();
                 const alts = document.createElement('span');
                 alts.classList.add('ve-translation-alternatives');
+                if (color && color === 'dark') {
+                    alts.classList.add('ve-translation-alternatives-dark');
+                }
 
                 let altTrans = res.translations.slice(1)
                 .map((trans, i, a) => {

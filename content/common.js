@@ -12,7 +12,7 @@ if (document.readyState === "complete" ) {
  *                  mutation target was changed. 
  *              That means that a node was appended or removed from the selected element or its subtree.
  *              default: false
- *      firstPass: boolean that states wether the renderer should be called once before mutations have happened
+ *      firstPass: boolean that states whether the renderer should be called once before mutations have happened
  *              default: false 
  *      rootSelector: (optional) root element selector to observe on.
  *              default: document
