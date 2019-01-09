@@ -1,3 +1,7 @@
+### v0.4.0
+* modularisation of the vocabulary.com api into a new project (https://github.com/th0rgall/voc-api/). It is now reusable for other Node/browser projects.
+* new build system with a makefile
+
 ### v0.3.6
 * language switcher only shows when clicking the current language
 * more detailed translations and alternatives. Hover for synonyms.
