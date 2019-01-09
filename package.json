@@ -1,0 +1,29 @@
+{
+  "name": "voc-enhancer",
+  "version": "0.3.2",
+  "description": "",
+  "main": "src/content/voc-adder.js",
+  "scripts": {
+    "build:ff": "",
+    "build:chr": "",
+    "web-ext": "web-ext run  -s ./"
+  },
+  "repository": "git+https://github.com/th0rgall/voc-enhancer.git",
+  "keywords": [
+    "vocabulary.com",
+    "browser extension"
+  ],
+  "author": "Thor Galle",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/th0rgall/voc-enhancer/issues"
+  },
+  "homepage": "https://github.com/th0rgall/voc-enhancer#readme",
+  "dependencies": {
+    "crx": "^3.2.1",
+    "voc-api": "../voc-api"
+  },
+  "devDependencies": {
+    "preprocessor": "^1.4.0"
+  }
+}

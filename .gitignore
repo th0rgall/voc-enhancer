@@ -1,0 +1,7 @@
+**/dist
+*.zip
+**/node_modules
+**/.git
+*.pem
+*.crx
+
