@@ -11,7 +11,7 @@
         "114": "icons/favicon-114x114.png"
     },
     "background": {
-        "scripts": ["api/vocabulary-api.js", "background.js"]
+        "scripts": ["api/vocabulary-api.js", "background.js"], "persistent": false
     },
     "content_scripts": [{
         "matches": ["*://*/*"],

@@ -1,6 +1,8 @@
 // set up VocAPi
 
 let vocapi = new VocAPI();
+let loggedIn = false;
+let menusCreated = false;
 
 logError = (err) => {
   console.log("API Error: " + err);
@@ -10,13 +12,16 @@ function checkLogin() {
   vocapi.checkLogin()
   .then(() => {
     chrome.contextMenus.remove("login");
+    loggedIn = true;
     createContextMenus();
   })
   .catch((err) => {
       // create a context menu to redirect to a login page
       chrome.contextMenus.create({id: "login", title: "Log in to voc.com to save words", onclick: () => {
         chrome.tabs.create({url: 'https://www.vocabulary.com/login'});
-      }});
+      }}, () => {
+        console.log(chrome.runtime.lastError);
+      });
       logError(err);
   });
 }
@@ -42,7 +47,6 @@ function sendToActiveTab(message, callback) {
   });
 } 
 
-loggedIn = false;
 checkLogin();
 
 
@@ -53,7 +57,7 @@ function createContextMenus() {
 
   vocapi.getLists()
   .then((lists) => {
-    chrome.contextMenus.create({id: "addtoParent", title: addToText, contexts: ["selection"]});
+    chrome.contextMenus.create({id: "addtoParent", title: addToText, contexts: ["selection"]}, () => {menusCreated = true});
     // create "start learning" context menu
     chrome.contextMenus.create({id: "learnvoc", parentId: "addtoParent", title:"Just Start Learning", contexts: ["selection"], 
     onclick: startLearning});
@@ -134,12 +138,14 @@ function parseVoclist(inputStr, synchronous) {
 
 // update context menu entry when selection contains more words
 function checkSelection(selection) {
-  const words = parseVoclist(selection, true);
-  if (words.length > 1) {
-    chrome.contextMenus.update('addtoParent', {title: `voc.com: add ${words.length} words to...`});
-  } else {
-    // reset
-    chrome.contextMenus.update('addtoParent', {title: addToText});
+  if (loggedIn && menusCreated) {
+    const words = parseVoclist(selection, true);
+    if (words.length > 1) {
+      chrome.contextMenus.update('addtoParent', {title: `voc.com: add ${words.length} words to...`});
+    } else {
+      // reset
+      chrome.contextMenus.update('addtoParent', {title: addToText});
+    }
   }
 }
 
