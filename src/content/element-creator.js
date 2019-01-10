@@ -7,6 +7,11 @@ function createTranslation(word, color) {
 
     let defaultLan = 'nl';
     let currentLan = 'nl';
+    let persistedLan = localStorage.getItem("defaultTargetLan");
+    if (persistedLan) {
+        defaultLan = persistedLan;
+        currentLan = persistedLan;
+    } 
 
     // create translation element
     const translationEl = document.createElement('div');
@@ -100,6 +105,7 @@ function createTranslation(word, color) {
         const selectedLan = e.target.value;
         if (selectedLan !== currentLan) {
             currentLan = selectedLan;
+            localStorage.setItem("defaultTargetLan", currentLan);
             injectTranslation(e.target.value);
 
         }
