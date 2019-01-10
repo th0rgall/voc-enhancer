@@ -103,6 +103,10 @@ function getSurroundingSentence() {
 }
 
 document.addEventListener('selectionchange', () => {
+    // TODO: this check every time. Is that necessary?
+    chrome.runtime.sendMessage({
+        type: 'checkLogin'
+    });
     const text = getSelectedText();
     if (text) {
         // TODO: this is initiated for every selection now.

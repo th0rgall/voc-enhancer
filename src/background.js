@@ -2,28 +2,60 @@
 
 let vocapi = new VocAPI();
 let loggedIn = false;
-let menusCreated = false;
+
+let contextMenus =  {}
+
+// method to create context menu and keep track of its existence
+function createContextMenu() {
+  if (arguments[0] && arguments[0].id) {
+    // TODO: not sure if this will work properly, is creation synchronous or asynchrounous?
+    // take in to account calll back and the runtime error?
+    chrome.contextMenus[arguments[0].id] = chrome.contextMenus.create.apply(null, arguments);
+  }
+}
+
+function updateContextMenu() {
+  if (arguments[0] && contextMenuExists(arguments[0])) {
+    chrome.contextMenus.update.apply(mull, arguments);
+  }
+
+}
+
+function removeContextMenu() {
+  if (arguments[0] && contextMenuExists(arguments[0])) {
+    chrome.contextMenus.remove.apply(null, arguments);
+    contextMenus[arguments[0]] = undefined;
+  }
+}
+
+function contextMenuExists(id) {
+  return !!contextMenus[id];
+}
 
 logError = (err) => {
   console.log("API Error: " + err);
 }
 
 function checkLogin() {
-  vocapi.checkLogin()
-  .then(() => {
-    chrome.contextMenus.remove("login");
-    loggedIn = true;
-    createContextMenus();
-  })
-  .catch((err) => {
-      // create a context menu to redirect to a login page
-      chrome.contextMenus.create({id: "login", title: "Log in to voc.com to save words", onclick: () => {
-        chrome.tabs.create({url: 'https://www.vocabulary.com/login'});
-      }}, () => {
-        console.log(chrome.runtime.lastError);
-      });
-      logError(err);
-  });
+  if (loggedIn && contextMenuExist("addtoParent")) {
+    return true
+  } else {
+    vocapi.checkLogin()
+    .then(() => {
+      removeContextMenu("login");
+      loggedIn = true;
+      createContextMenus();
+    })
+    .catch((err) => {
+        // create a context menu to redirect to a login page
+        contextMenus.login = createContextMenu({id: "login", title: "Log in to voc.com to save words", onclick: () => {
+          chrome.tabs.create({url: 'https://www.vocabulary.com/login'});
+        }}, () => {
+          console.log(chrome.runtime.lastError);
+        });
+        logError(err);
+    });
+  }
 }
 
 // incoming connection
@@ -57,21 +89,21 @@ function createContextMenus() {
 
   vocapi.getLists()
   .then((lists) => {
-    chrome.contextMenus.create({id: "addtoParent", title: addToText, contexts: ["selection"]}, () => {menusCreated = true});
+    contextMenus.addtoParent = createContextMenu({id: "addtoParent", title: addToText, contexts: ["selection"]});
     // create "start learning" context menu
-    chrome.contextMenus.create({id: "learnvoc", parentId: "addtoParent", title:"Just Start Learning", contexts: ["selection"], 
+    createContextMenu({id: "learnvoc", parentId: "addtoParent", title:"Just Start Learning", contexts: ["selection"], 
     onclick: startLearning});
     // separator
-    chrome.contextMenus.create({id: "sep", parentId: "addtoParent", type: "separator", contexts: ["selection"]});
+    createContextMenu({id: "sep", parentId: "addtoParent", type: "separator", contexts: ["selection"]});
     // add list entries
     lists.forEach((wordList) => {
-      chrome.contextMenus.create({id: `addto-${wordList.name}`, 
+      createContextMenu({id: `addto-${wordList.name}`, 
       title: `${wordList.name} (${wordList.wordcount})`, parentId: "addtoParent", contexts: ["selection"], onclick: addToF(wordList.wordlistid)})
     });
     // separator 2
-    chrome.contextMenus.create({id: "sep2", parentId: "addtoParent", type: "separator", contexts: ["selection"]});
+    createContextMenu({id: "sep2", parentId: "addtoParent", type: "separator", contexts: ["selection"]});
     // add to new list entry
-    chrome.contextMenus.create({id: "addtoNew", parentId: "addtoParent", title: "Add to a new list...", contexts: ["selection"], onclick: addToNewHandler});
+    createContextMenu({id: "addtoNew", parentId: "addtoParent", title: "Add to a new list...", contexts: ["selection"], onclick: addToNewHandler});
   })
   .catch(logError);
 }
@@ -138,13 +170,14 @@ function parseVoclist(inputStr, synchronous) {
 
 // update context menu entry when selection contains more words
 function checkSelection(selection) {
-  if (loggedIn && menusCreated) {
+  if (loggedIn && contextMenuExists('addtoParent')) {
+    // TODO: problems if you logged out after logging in, in same browser session
     const words = parseVoclist(selection, true);
     if (words.length > 1) {
-      chrome.contextMenus.update('addtoParent', {title: `voc.com: add ${words.length} words to...`});
+      updateContextMenu('addtoParent', {title: `voc.com: add ${words.length} words to...`});
     } else {
       // reset
-      chrome.contextMenus.update('addtoParent', {title: addToText});
+      updateContextMenu('addtoParent', {title: addToText});
     }
   }
 }
