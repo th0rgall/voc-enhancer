@@ -4,8 +4,7 @@
   "description": "",
   "main": "src/content/voc-adder.js",
   "scripts": {
-    "build:ff": "",
-    "build:chr": "",
+    "build": "make",
     "web-ext": "web-ext run  -s ./"
   },
   "repository": "git+https://github.com/th0rgall/voc-enhancer.git",

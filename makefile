@@ -29,6 +29,8 @@ pack_chr: clean_chr build_chr
 	# npx crx pack dist/chrome -p chrome.pem > dist/voc-api-chr.crx 
 	# TODO: investigate this one further
 	#open -a "Google Chrome" --args --pack-extension=${PWD}/dist/chrome --pack-extension-key=${PWD}/browser-extension.pem
+	# chrome needs zip for upload
+	pushd dist/chrome && zip -r ../voc-adder-chr.zip *; popd
 
 clean: clean_ff clean_chr
 
@@ -39,3 +41,6 @@ clean_ff:
 clean_chr:
 	rm -rf dist/chrome
 	if [ -f "dist/voc-adder-chr.crx" ]; then rm dist/voc-adder-ff.crx; fi
+
+pack_src:
+	zip -r dist/voc-adder-src.zip * -x dist/\* -x node_modules/\* -x \*.pem -x \*.crx -x \*.zip;

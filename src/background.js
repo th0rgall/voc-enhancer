@@ -37,7 +37,7 @@ logError = (err) => {
 }
 
 function checkLogin() {
-  if (loggedIn && contextMenuExist("addtoParent")) {
+  if (loggedIn && contextMenuExists("addtoParent")) {
     return true
   } else {
     vocapi.checkLogin()
