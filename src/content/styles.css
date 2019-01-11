@@ -33,6 +33,12 @@
     margin: 0.1em;
 }
 
+.ve-source-link {
+    pointer-events: none;
+    cursor: default;
+    color: #333 !important;
+}
+
 /* voc.com css override */
 .wordlist.notesView a.word {
     margin-right: 10px;

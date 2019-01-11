@@ -26,17 +26,17 @@
         "js": ["content/misc.js"]
     },{
         "matches": ["*://*.vocabulary.com/", "*://*.vocabulary.com/play/", "*://www.vocabulary.com/lists/*/practice"],
-        "js": ["api/languages.js", "api/google-translate.js", 
+        "js": ["api/languages.js", "api/translate.js", 
             "content/element-creator.js", "content/quiz-injector.js", "content/common.js"],
         "css": ["content/styles.css"]
     }, {
         "matches": ["*://*.vocabulary.com/dictionary/*"],
-        "js": ["api/languages.js", "api/google-translate.js", 
+        "js": ["api/languages.js", "api/translate.js", 
             "content/element-creator.js", "content/definition-injector.js", "content/common.js"],
         "css": ["content/styles.css"]
     }, {
         "matches": ["*://*.vocabulary.com/lists/*"],
-        "js": ["api/languages.js", "api/google-translate.js", 
+        "js": ["api/languages.js", "api/translate.js", 
             "content/element-creator.js", "content/list-injector.js", "content/common.js"],
         "css": ["content/styles.css"]
     }
