@@ -57,12 +57,15 @@ function createTranslation(word, color) {
             textContainer.title = tAlts(res.translations[0]);
             // adjust label
             langLable.childNodes[0].nodeValue = `${target.toUpperCase()}: `;
-            
-            // additional translations
+           
+            // remove previous alt translations
+            let prevAlts = document.querySelector('.challenge-slide:last-child .ve-translation-alternatives');
+            if (prevAlts) {
+                prevAlts.remove();
+            }
+
+            // add additional translations
             if (res.translations.length > 1) {
-                // remove previous translations
-                let prevAlts = document.querySelector('.challenge-slide:last-child .ve-translation-alternatives');
-                if (prevAlts) prevAlts.remove();
                 const alts = document.createElement('span');
                 alts.classList.add('ve-translation-alternatives');
                 if (color && color === 'dark') {
