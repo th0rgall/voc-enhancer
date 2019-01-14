@@ -4,7 +4,8 @@ This browser extension for Firefox/Chrome allows [vocabulary.com](https://www.vo
 
 ## Installation
 
-Instructions at the [releases page](https://github.com/th0rgall/voc-adder/releases). This extension will soon be released in the Firefox Addon store and Chrome Extension store.
+- [Mozilla Firefox Add-on store page](https://addons.mozilla.org/en-US/firefox/addon/vocabulary-com-enhancer/)
+- The add-on is being reviewed for the Chrome Extension Web Store. For now, do a manual install via the [releases page](https://github.com/th0rgall/voc-adder/releases). 
 
 ## Usage
 
