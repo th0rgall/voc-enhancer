@@ -1,26 +1,25 @@
 {
   "name": "voc-enhancer",
   "version": "0.4.3",
-  "description": "Show translations in the word game & on definitions. Right-click to add selected words.",
-  "main": "src/content/voc-adder.js",
+  "description": "Show translations in the word game & on definitions. Add words to your lists from any web page.",
   "scripts": {
     "build": "make",
     "web-ext": "web-ext run  -s ./"
   },
-  "repository": "git+https://github.com/th0rgall/voc-enhancer.git",
   "keywords": [
     "vocabulary.com",
     "browser extension"
   ],
   "author": "Thor Galle",
   "license": "ISC",
+  "homepage": "https://github.com/th0rgall/voc-enhancer#readme",
+  "repository": "github:th0rgall/voc-enhancer.git",
   "bugs": {
     "url": "https://github.com/th0rgall/voc-enhancer/issues"
   },
-  "homepage": "https://github.com/th0rgall/voc-enhancer#readme",
   "dependencies": {
     "crx": "^3.2.1",
-    "voc-api": "../voc-api"
+    "voc-api": "th0rgall/voc-api"
   },
   "devDependencies": {
     "preprocessor": "^1.4.0"
