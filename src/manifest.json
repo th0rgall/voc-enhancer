@@ -1,6 +1,7 @@
 {
     "manifest_version": 2,
     "name": "Vocabulary.com Enhancer (unofficial)",
+    "short_name": "Voc.com Enhancer",
     "author": "Thor Galle",
     "version": "0.4.3",
     "description": "Show translations in the word game & on definitions. Right-click to add selected words.",

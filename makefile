@@ -21,7 +21,7 @@ build_chr: clean_chr
 
 pack_ff: clean_ff build_ff
 	## pack ff zip
-	pushd dist/firefox && zip -r ../voc-adder-ff.zip *; popd
+	pushd dist/firefox && zip -r ../voc-enhancer-ff.zip *; popd
 
 pack_chr: clean_chr build_chr
 	## pack chrome extension
@@ -30,17 +30,17 @@ pack_chr: clean_chr build_chr
 	# TODO: investigate this one further
 	#open -a "Google Chrome" --args --pack-extension=${PWD}/dist/chrome --pack-extension-key=${PWD}/browser-extension.pem
 	# chrome needs zip for upload
-	pushd dist/chrome && zip -r ../voc-adder-chr.zip *; popd
+	pushd dist/chrome && zip -r ../voc-enhancer-chr.zip *; popd
 
 clean: clean_ff clean_chr
 
 clean_ff:
 	rm -rf dist/firefox
-	if [ -f "dist/voc-adder-ff.zip" ]; then rm dist/voc-adder-ff.zip; fi
+	if [ -f "dist/voc-enhancer-ff.zip" ]; then rm dist/voc-enhancer-ff.zip; fi
 
 clean_chr:
 	rm -rf dist/chrome
-	if [ -f "dist/voc-adder-chr.crx" ]; then rm dist/voc-adder-ff.crx; fi
+	if [ -f "dist/voc-enhancer-chr.crx" ]; then rm dist/voc-enhancer-ff.crx; fi
 
 pack_src:
-	zip -r dist/voc-adder-src.zip * -x dist/\* -x node_modules/\* -x \*.pem -x \*.crx -x \*.zip;
+	zip -r dist/voc-enhancer-src.zip * -x dist/\* -x node_modules/\* -x \*.pem -x \*.crx -x \*.zip;
