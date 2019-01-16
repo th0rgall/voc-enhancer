@@ -19,10 +19,6 @@
         // #endif
     },
     "content_scripts": [{
-        "matches": ["*://*/*"],
-        "js": ["content/voc-adder.js"],
-        "css": ["content/styles.css"]
-    }, {
         "matches": ["*://*.vocabulary.com/*"],
         "js": ["content/misc.js"]
     },{
@@ -48,11 +44,10 @@
         "tabs",
         "webRequest",
         "webRequestBlocking",
-        "notifications",
-        "http://*/*",
-        "https://*/*"
+        "notifications"
     ],
     "web_accessible_resources": [
-        "icons/*"
+        "icons/*",
+        "content/*"
     ]
 }

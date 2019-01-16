@@ -81,8 +81,19 @@ function sendToActiveTab(message, callback) {
 
 checkLogin();
 
+const handlers = {};
+
 
 const addToText = "voc.com: add '%s' to...";
+
+chrome.contextMenus.onClicked.addListener(function (info, tab) {
+  chrome.tabs.insertCSS(tab.id, {file: 'content/styles.css'}, () => {
+    chrome.tabs.executeScript(tab.id, {file: 'content/voc-adder.js'}, () => {
+      handlers[info.menuItemId](info, tab);
+      
+    })
+  })
+}); 
 
 // create "add to" context menus
 function createContextMenus() {
@@ -97,8 +108,10 @@ function createContextMenus() {
     createContextMenu({id: "sep", parentId: "addtoParent", type: "separator", contexts: ["selection"]});
     // add list entries
     lists.forEach((wordList) => {
-      createContextMenu({id: `addto-${wordList.name}`, 
-      title: `${wordList.name} (${wordList.wordcount})`, parentId: "addtoParent", contexts: ["selection"], onclick: addToF(wordList.wordlistid)})
+      const menuId = `addto-${wordList.name}`;
+      createContextMenu({id: menuId, 
+        title: `${wordList.name} (${wordList.wordcount})`, parentId: "addtoParent", contexts: ["selection"] });
+      handlers[menuId] = addToF(wordList.wordlistid);
     });
     // separator 2
     createContextMenu({id: "sep2", parentId: "addtoParent", type: "separator", contexts: ["selection"]});
