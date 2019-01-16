@@ -160,7 +160,7 @@ function createLinks(word) {
         container.appendChild(ref);
 
         const icon = document.createElement('img');
-        icon.src = chrome.extension.getURL(link.icon);
+        icon.src = chrome.runtime.getURL(link.icon);
         ref.appendChild(icon);
 
     });
