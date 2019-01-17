@@ -3,7 +3,7 @@
     "name": "Vocabulary.com Enhancer (unofficial)",
     "short_name": "Voc.com Enhancer",
     "author": "Thor Galle",
-    "version": "0.4.3",
+    "version": "0.4.5",
     "description": "Show translations in the word game & on definitions. Right-click to add selected words.",
     "icons": {
         "16": "icons/favicon-16x16.png",
@@ -13,34 +13,81 @@
         "128": "icons/favicon-128x128.png"
     },
     "background": {
-        "scripts": ["api/vocabulary-api.js", "background.js"]
+        "scripts": [
+            "api/vocabulary-api.js",
+            "background.js"
+        ]
         // #ifdef CHROME
-        , "persistent": true
+        ,"persistent": true
         // #endif
     },
-    "content_scripts": [{
-        "matches": ["*://*/*"],
-        "js": ["content/voc-adder.js"],
-        "css": ["content/styles.css"]
-    }, {
-        "matches": ["*://*.vocabulary.com/*"],
-        "js": ["content/misc.js"]
-    },{
-        "matches": ["*://*.vocabulary.com/", "*://*.vocabulary.com/play/", "*://www.vocabulary.com/lists/*/practice"],
-        "js": ["api/languages.js", "api/translate.js", 
-            "content/element-creator.js", "content/quiz-injector.js", "content/common.js"],
-        "css": ["content/styles.css"]
-    }, {
-        "matches": ["*://*.vocabulary.com/dictionary/*"],
-        "js": ["api/languages.js", "api/translate.js", 
-            "content/element-creator.js", "content/definition-injector.js", "content/common.js"],
-        "css": ["content/styles.css"]
-    }, {
-        "matches": ["*://*.vocabulary.com/lists/*"],
-        "js": ["api/languages.js", "api/translate.js", 
-            "content/element-creator.js", "content/list-injector.js", "content/common.js"],
-        "css": ["content/styles.css"]
-    }
+    "content_scripts": [
+        {
+            "matches": [
+                "*://*/*"
+            ],
+            "js": [
+                "content/voc-adder.js"
+            ],
+            "css": [
+                "content/styles.css"
+            ]
+        },
+        {
+            "matches": [
+                "*://*.vocabulary.com/*"
+            ],
+            "js": [
+                "content/misc.js"
+            ]
+        },
+        {
+            "matches": [
+                "*://*.vocabulary.com/",
+                "*://*.vocabulary.com/play/",
+                "*://www.vocabulary.com/lists/*/practice"
+            ],
+            "js": [
+                "api/languages.js",
+                "api/translate.js",
+                "content/element-creator.js",
+                "content/quiz-injector.js",
+                "content/common.js"
+            ],
+            "css": [
+                "content/styles.css"
+            ]
+        },
+        {
+            "matches": [
+                "*://*.vocabulary.com/dictionary/*"
+            ],
+            "js": [
+                "api/languages.js",
+                "api/translate.js",
+                "content/element-creator.js",
+                "content/definition-injector.js",
+                "content/common.js"
+            ],
+            "css": [
+                "content/styles.css"
+            ]
+        },
+        {
+            "matches": [
+                "*://*.vocabulary.com/lists/*"
+            ],
+            "js": [
+                "api/languages.js",
+                "api/translate.js",
+                "content/element-creator.js",
+                "content/list-injector.js",
+                "content/common.js"
+            ],
+            "css": [
+                "content/styles.css"
+            ]
+        }
     ],
     "permissions": [
         "contextMenus",

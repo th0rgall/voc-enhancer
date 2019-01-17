@@ -22,8 +22,8 @@ acorn@^6.0.1, acorn@^6.0.4:
   resolved "https://registry.yarnpkg.com/acorn/-/acorn-6.0.5.tgz#81730c0815f3f3b34d8efa95cb7430965f4d887a"
 
 ajv@^6.5.5:
-  version "6.6.2"
-  resolved "https://registry.yarnpkg.com/ajv/-/ajv-6.6.2.tgz#caceccf474bf3fc3ce3b147443711a24063cc30d"
+  version "6.7.0"
+  resolved "https://registry.yarnpkg.com/ajv/-/ajv-6.7.0.tgz#e3ce7bb372d6577bb1839f1dfdfcbf5ad2948d96"
   dependencies:
     fast-deep-equal "^2.0.1"
     fast-json-stable-stringify "^2.0.0"
@@ -829,8 +829,8 @@ voc-dom@th0rgall/voc-dom:
     jsdom "^13.0.0"
 
 voc-http@th0rgall/voc-http:
-  version "1.0.0"
-  resolved "https://codeload.github.com/th0rgall/voc-http/tar.gz/0c0f4af1fd2cd8c6975c62b3fa649e84595097bc"
+  version "1.0.1"
+  resolved "https://codeload.github.com/th0rgall/voc-http/tar.gz/fa24386b5ca5538763926e6a002274d303ba4954"
   dependencies:
     request "^2.88.0"
     request-promise "^4.2.2"

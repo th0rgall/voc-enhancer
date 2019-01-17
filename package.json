@@ -1,6 +1,6 @@
 {
   "name": "voc-enhancer",
-  "version": "0.4.3",
+  "version": "0.4.5",
   "description": "Show translations in the word game & on definitions. Add words to your lists from any web page.",
   "scripts": {
     "build": "make",

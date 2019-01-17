@@ -40,7 +40,8 @@ function createTranslation(word, color) {
         // get shown PoS
         let domPos = document.querySelector('.challenge-slide:last-child');
         let pos;
-        if (domPos) pos = JSON.parse(domPos.dataset.progress)[0].pos;
+        // Jan 17, 19:TODO: fix pos by using api, progress no longer in page
+        if (domPos && domPos.dataset.progress) pos = JSON.parse(domPos.dataset.progress)[0].pos;
 
         translate(word, {from: 'en', to: target, pos: pos}).then(res => {
 
