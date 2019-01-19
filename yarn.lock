@@ -687,8 +687,8 @@ safe-buffer@^5.0.1, safe-buffer@^5.1.1, safe-buffer@^5.1.2, safe-buffer@~5.1.0, 
   resolved "https://registry.yarnpkg.com/safer-buffer/-/safer-buffer-2.1.2.tgz#44fa161b0187b9549dd84bb91802f9bd8385cd6a"
 
 saxes@^3.1.4:
-  version "3.1.5"
-  resolved "https://registry.yarnpkg.com/saxes/-/saxes-3.1.5.tgz#ecbba12c7ca99f87f70dbd14a6c57b2b5de8b298"
+  version "3.1.6"
+  resolved "https://registry.yarnpkg.com/saxes/-/saxes-3.1.6.tgz#2d948a47b54918516c5a64096f08865deb5bd8cd"
   dependencies:
     xmlchars "^1.3.1"
 
@@ -829,8 +829,8 @@ voc-dom@th0rgall/voc-dom:
     jsdom "^13.0.0"
 
 voc-http@th0rgall/voc-http:
-  version "1.0.1"
-  resolved "https://codeload.github.com/th0rgall/voc-http/tar.gz/fa24386b5ca5538763926e6a002274d303ba4954"
+  version "1.0.2"
+  resolved "https://codeload.github.com/th0rgall/voc-http/tar.gz/7146a2e534fb67b896b3307fdfd723de3453235b"
   dependencies:
     request "^2.88.0"
     request-promise "^4.2.2"
