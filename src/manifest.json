@@ -8,8 +8,7 @@
     "icons": {
         "16": "icons/favicon-16x16.png",
         "32": "icons/favicon-32x32.png",
-        "75": "icons/opengraph-75x75.gif",
-        "114": "icons/favicon-114x114.png",
+        "64": "icons/favicon-64x64.png",
         "128": "icons/favicon-128x128.png"
     },
     "background": {
