@@ -1,11 +1,12 @@
 # Vocabulary.com Enhancer
 
-This browser extension for Firefox/Chrome allows [vocabulary.com](https://www.vocabulary.com/) users to add words from any web page to their vocabulary lists. It also offers translations to any language in the world learning game, and links to clarifying services like Google Images. 
+This browser extension for Firefox/Chrome allows [vocabulary.com](https://www.vocabulary.com/) users to add words from any web page to their vocabulary lists. It also offers translations to any language in the world learning game, and links to clarifying services like Google Images or the Urban Dictionary. 
 
 ## Installation
 
-- [Mozilla Firefox Add-on store page](https://addons.mozilla.org/en-US/firefox/addon/vocabulary-com-enhancer/)
-- The add-on is being reviewed for the Chrome Extension Web Store. For now, do a manual install via the [releases page](https://github.com/th0rgall/voc-adder/releases). 
+Install via your browser's extension store:
+- [Google Chrome](https://chrome.google.com/webstore/detail/diddacjdgklfjgnlmknacnakjcgdiegn)
+- [Mozilla Firefox](https://addons.mozilla.org/en-US/firefox/addon/vocabulary-com-enhancer/)
 
 ## Usage
 
