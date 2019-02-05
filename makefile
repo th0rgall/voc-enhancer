@@ -11,13 +11,13 @@ build_ff: clean_ff
 	if [ ! -d "dist/firefox" ]; then mkdir -p dist/firefox; fi
 	${CP_COMMON_SOURCES} dist/firefox
 	${BROWSERIFY_API} dist/firefox/api/vocabulary-api.js
-	npx preprocess src/manifest.json -CHROME=false > dist/firefox/manifest.json	
+	cp src/manifest.json dist/firefox/manifest.json	
 
 build_chr: clean_chr
 	if [ ! -d "dist/chrome" ]; then mkdir -p dist/chrome; fi
 	${CP_COMMON_SOURCES} dist/chrome
 	${BROWSERIFY_API} dist/chrome/api/vocabulary-api.js
-	npx preprocess src/manifest.json -CHROME=true > dist/chrome/manifest.json
+	node src/manifest-modifier.js chrome > dist/chrome/manifest.json
 
 pack_ff: clean_ff build_ff
 	## pack ff zip

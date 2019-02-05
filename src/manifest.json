@@ -17,9 +17,7 @@
             "api/vocabulary-api.js",
             "background.js"
         ]
-        // #ifdef CHROME
-        ,"persistent": true
-        // #endif
+
     },
     "content_scripts": [
         {

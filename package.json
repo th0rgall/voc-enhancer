@@ -21,7 +21,5 @@
     "crx": "^3.2.1",
     "voc-api": "th0rgall/voc-api"
   },
-  "devDependencies": {
-    "preprocessor": "^1.4.0"
-  }
+  "devDependencies": {}
 }
