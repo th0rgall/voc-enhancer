@@ -3,7 +3,7 @@
     "name": "Vocabulary.com Enhancer (unofficial)",
     "short_name": "Voc.com Enhancer",
     "author": "Thor Galle",
-    "version": "0.4.7",
+    "version": "0.4.8",
     "description": "Show translations in the word game & on definitions. Right-click to add selected words.",
     "icons": {
         "16": "icons/favicon-16x16.png",
@@ -17,7 +17,6 @@
             "api/vocabulary-api.js",
             "background.js"
         ]
-
     },
     "content_scripts": [
         {
@@ -43,7 +42,7 @@
             "matches": [
                 "*://*.vocabulary.com/",
                 "*://*.vocabulary.com/play/",
-                "*://www.vocabulary.com/lists/*/practice"
+                "*://www.vocabulary.com/lists/*/practice*"
             ],
             "js": [
                 "api/languages.js",
@@ -74,6 +73,9 @@
         {
             "matches": [
                 "*://*.vocabulary.com/lists/*"
+            ],
+            "exclude_matches": [
+                "*://*.vocabulary.com/lists/*/edit"
             ],
             "js": [
                 "api/languages.js",

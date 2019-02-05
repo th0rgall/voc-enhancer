@@ -28,9 +28,18 @@
 
 .ve-external-link {
     display: inline-block;
-    width: 1.2em;
-    height: 1.2em;
-    margin: 0.1em;
+    width: 24px;
+    height: 24px;
+    margin: 12px;
+}
+
+.ve-external-link:first-child {
+    margin-left: 0;
+}
+
+/* in word list page */
+.entry .ve-external-link {
+    margin-bottom: 0;
 }
 
 .ve-source-link {
@@ -60,7 +69,7 @@
 /* Quiz injection */
 .ve-quiz-injection {
 	display: flex;
-	flex-direction: row;
+	flex-direction: column;
 	justify-content: space-between;
 }
 
