@@ -128,24 +128,30 @@ function createTranslation(word, color) {
     return translationEl;
 }
 
+const makeLinkGetter = (f) => ((w) => f(encodeURIComponent(w)));
+
 const externalLinks = [
     {
         "title": 'DuckDuckGo Image Search',
         "icon": 'icons/ddg-favicon.ico',
-        "getLink": (w) => `https://duckduckgo.com/?q=${encodeURIComponent(w)}&t=ffab&iax=images&ia=images`
+        "getLink": makeLinkGetter((w) => `https://duckduckgo.com/?q=${w}&t=ffab&iax=images&ia=images`)
     }, {
         "title": 'Google Image Search',
         "icon": 'icons/google-favicon.ico',
-        "getLink": (w) => `https://www.google.com/search?tbm=isch&q=${encodeURIComponent(w)}&tbs=imgo:1`
+        "getLink": makeLinkGetter((w) => `https://www.google.com/search?tbm=isch&q=${w}&tbs=imgo:1`)
     }, {
         "title": 'GIPHY Image Search',
         "icon": 'icons/giphy-favicon.png',
-        "getLink": (w) => `https://giphy.com/search/${encodeURIComponent(w)}`
+        "getLink": makeLinkGetter((w) => `https://giphy.com/search/${w}`)
 
     }, {
-        "title": 'YouGlish',
+        "title": 'YouGlish Pronounciation Search',
         "icon": 'icons/youglish-favicon.png',
-        "getLink": (w) => `https://youglish.com/search/${encodeURIComponent(w)}`
+        "getLink": makeLinkGetter((w) => `https://youglish.com/search/${w}`)
+    }, {
+        "title": 'Urban Dictionary Search',
+        "icon": 'icons/urbandictionary-favicon.ico',
+        "getLink": makeLinkGetter((w) => `https://www.urbandictionary.com/define.php?term=${w}`)
     }
 ];
 
