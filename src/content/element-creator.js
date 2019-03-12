@@ -143,7 +143,6 @@ const externalLinks = [
         "title": 'GIPHY Image Search',
         "icon": 'icons/giphy-favicon.png',
         "getLink": makeLinkGetter((w) => `https://giphy.com/search/${w}`)
-
     }, {
         "title": 'YouGlish Pronounciation Search',
         "icon": 'icons/youglish-favicon.png',
@@ -152,6 +151,38 @@ const externalLinks = [
         "title": 'Urban Dictionary Search',
         "icon": 'icons/urbandictionary-favicon.ico',
         "getLink": makeLinkGetter((w) => `https://www.urbandictionary.com/define.php?term=${w}`)
+    }, {
+        "title": 'Dictionary.com Search',
+        "icon": 'icons/dictionary-com.png',
+        "getLink": makeLinkGetter((w) => `https://www.dictionary.com/browse/${w}`)
+    }, {
+        "title": 'Thesaurus.com Search',
+        "icon": 'icons/thesaurus-com.png',
+        "getLink": makeLinkGetter((w) => `https://www.thesaurus.com/browse/${w}`)
+    }, {
+        "title": 'Wiktionary',
+        "icon": 'icons/wiktionary.ico',
+        "getLink": makeLinkGetter((w) => `https://en.wiktionary.org/wiki/${w}`)
+    }, {
+        "title": 'Wikipedia',
+        "icon": 'icons/wikipedia.ico',
+        "getLink": makeLinkGetter((w) => `https://en.wikipedia.org/wiki/${w}`)
+    }, {
+        "title": 'Wordnik',
+        "icon": 'icons/wordnik.png',
+        "getLink": makeLinkGetter((w) => `https://www.wordnik.com/words/${w}`)
+    }, {
+        "title": 'Merriam-Webster',
+        "icon": 'icons/merriam-webster.png',
+        "getLink": makeLinkGetter((w) => `https://www.merriam-webster.com/dictionary/${w}`)
+    }, {
+        "title": 'Google Define',
+        "icon": 'icons/google-define.png',
+        "getLink": makeLinkGetter((w) => `https://www.google.com/search?hl=en&q=google%20define#dobs=${w}`)
+    }, {
+        "title": 'The Free Dictionary',
+        "icon": 'icons/thefreedictionary.png',
+        "getLink": makeLinkGetter((w) => `https://www.thefreedictionary.com/${w}`)
     }
 ];
 
@@ -164,6 +195,7 @@ function createLinks(word) {
         ref.target = '_blank';
         ref.rel = 'noopener noreferrer';
         ref.classList.add('ve-external-link');
+        ref.setAttribute("title", link.title);
         container.appendChild(ref);
 
         const icon = document.createElement('img');
