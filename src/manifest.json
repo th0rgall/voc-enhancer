@@ -95,6 +95,7 @@
         "webRequest",
         "webRequestBlocking",
         "notifications",
+        "*://*.vocabulary.com/",
         "http://*/*",
         "https://*/*"
     ],

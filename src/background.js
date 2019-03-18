@@ -1,6 +1,9 @@
-// set up VocAPi
+import Db from './settings';
+import VocAPI from '../node_modules/voc-api';
+const db = new Db();
 
-let vocapi = new VocAPI();
+// set up VocAPI
+const vocapi = new VocAPI();
 let loggedIn = false;
 
 let contextMenus =  {}

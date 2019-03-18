@@ -1,3 +1,4 @@
+import externalLinks from "../externalLinks";
 
 /**
  * Creates a translation DOM element.
@@ -128,68 +129,10 @@ function createTranslation(word, color) {
     return translationEl;
 }
 
-const makeLinkGetter = (f) => ((w) => f(encodeURIComponent(w)));
-
-const externalLinks = [
-    {
-        "title": 'DuckDuckGo Image Search',
-        "icon": 'icons/ddg-favicon.ico',
-        "getLink": makeLinkGetter((w) => `https://duckduckgo.com/?q=${w}&t=ffab&iax=images&ia=images`)
-    }, {
-        "title": 'Google Image Search',
-        "icon": 'icons/google-favicon.ico',
-        "getLink": makeLinkGetter((w) => `https://www.google.com/search?tbm=isch&q=${w}&tbs=imgo:1`)
-    }, {
-        "title": 'GIPHY Image Search',
-        "icon": 'icons/giphy-favicon.png',
-        "getLink": makeLinkGetter((w) => `https://giphy.com/search/${w}`)
-    }, {
-        "title": 'YouGlish Pronounciation Search',
-        "icon": 'icons/youglish-favicon.png',
-        "getLink": makeLinkGetter((w) => `https://youglish.com/search/${w}`)
-    }, {
-        "title": 'Urban Dictionary Search',
-        "icon": 'icons/urbandictionary-favicon.ico',
-        "getLink": makeLinkGetter((w) => `https://www.urbandictionary.com/define.php?term=${w}`)
-    }, {
-        "title": 'Dictionary.com Search',
-        "icon": 'icons/dictionary-com.png',
-        "getLink": makeLinkGetter((w) => `https://www.dictionary.com/browse/${w}`)
-    }, {
-        "title": 'Thesaurus.com Search',
-        "icon": 'icons/thesaurus-com.png',
-        "getLink": makeLinkGetter((w) => `https://www.thesaurus.com/browse/${w}`)
-    }, {
-        "title": 'Wiktionary',
-        "icon": 'icons/wiktionary.ico',
-        "getLink": makeLinkGetter((w) => `https://en.wiktionary.org/wiki/${w}`)
-    }, {
-        "title": 'Wikipedia',
-        "icon": 'icons/wikipedia.ico',
-        "getLink": makeLinkGetter((w) => `https://en.wikipedia.org/wiki/${w}`)
-    }, {
-        "title": 'Wordnik',
-        "icon": 'icons/wordnik.png',
-        "getLink": makeLinkGetter((w) => `https://www.wordnik.com/words/${w}`)
-    }, {
-        "title": 'Merriam-Webster',
-        "icon": 'icons/merriam-webster.png',
-        "getLink": makeLinkGetter((w) => `https://www.merriam-webster.com/dictionary/${w}`)
-    }, {
-        "title": 'Google Define',
-        "icon": 'icons/google-define.png',
-        "getLink": makeLinkGetter((w) => `https://www.google.com/search?hl=en&q=google%20define#dobs=${w}`)
-    }, {
-        "title": 'The Free Dictionary',
-        "icon": 'icons/thefreedictionary.png',
-        "getLink": makeLinkGetter((w) => `https://www.thefreedictionary.com/${w}`)
-    }
-];
-
 function createLinks(word) {
     const container = document.createElement('span');
     container.classList.add('ve-links');
-    externalLinks.forEach(link => {
+    Object.keys(externalLinks).map(k => a[k]).forEach(link => {
         const ref = document.createElement('a');
         ref.href = link.getLink(word);
         ref.target = '_blank';

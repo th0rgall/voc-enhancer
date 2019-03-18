@@ -4,7 +4,8 @@
   "description": "Show translations in the word game & on definitions. Add words to your lists from any web page.",
   "scripts": {
     "build": "make",
-    "web-ext": "web-ext run  -s ./"
+    "web-ext": "web-ext run  -s ./",
+    "dev": "npx webpack --config webpack.config.js --mode development"
   },
   "keywords": [
     "vocabulary.com",
@@ -18,8 +19,16 @@
     "url": "https://github.com/th0rgall/voc-enhancer/issues"
   },
   "dependencies": {
+    "clean-webpack-plugin": "^2.0.1",
+    "copy-webpack-plugin": "^5.0.1",
     "crx": "^3.2.1",
-    "voc-api": "th0rgall/voc-api"
+    "filemanager-webpack-plugin": "^2.0.5",
+    "voc-api": "th0rgall/voc-api",
+    "webextension-polyfill": "^0.4.0",
+    "webpack": "^4.29.6",
+    "webpack-chrome-extension-reloader": "^1.2.0"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "webpack-cli": "^3.2.3"
+  }
 }

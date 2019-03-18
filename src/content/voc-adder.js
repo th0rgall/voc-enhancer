@@ -67,8 +67,9 @@ function getSurroundingSentence() {
       // for the moment: [^\s] : no space before the capital letter
       // to be tolerant: sentence can also start at the end of another sentence
       // TODO: trim in between
-      let sentenceReg = new RegExp(`(\\.\\s{1,3}|([^\\s]|^)[A-Z])[^\\.]*(${regWord}|${regWordDecapitated})[^\\.]*\\.`);
-
+      const interpunction = '\\.\\?!';
+      const notInterpunction = `[^${interpunction}];`
+      let sentenceReg = new RegExp(`(\\.\\s{1,3}|([^\\s]|^)[A-Z])${notInterpunction}*(${regWord}|${regWordDecapitated})${notInterpunction}*${interpunction}`);
 
       let sentence = selectionNode.textContent;
       let hopCount = 0;

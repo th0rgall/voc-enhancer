@@ -4,7 +4,6 @@ if (document.readyState === "complete" ) {
     window.addEventListener('load', initialize);
 }
 
-
 /**
  * @param selector
  * @param options 
