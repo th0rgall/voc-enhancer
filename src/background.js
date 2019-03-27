@@ -1,6 +1,6 @@
 //import Db from './settings';
 import translate from './api/translate.js'
-//import VocAPI from '../node_modules/voc-api';
+import VocAPI from '../node_modules/voc-api';
 //const db = new Db();
 
 // set up VocAPI

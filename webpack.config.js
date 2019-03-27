@@ -3,10 +3,10 @@ const path = require('path');
 const pkg = require('./package.json');
 
 const fs = require('fs');
+const webpack = require('webpack');
 const CleanPlugin = require('clean-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
 const FileManagerPlugin = require('filemanager-webpack-plugin');
-const ShellPlugin = require('webpack-shell-plugin-alt');
 // const { BugsnagSourceMapUploaderPlugin } = require('webpack-bugsnag-plugins');
 // const { EnvironmentPlugin } = require('webpack');
 // const log = require('webpack-log')({ name: 'wds' });
@@ -15,7 +15,6 @@ const production = false;
 
 module.exports = {
   entry: {
-    //...entry('api/vocabulary-api'),
     ...entry('api/translate'), // todo: intergrateinto background
     ...entry('common'),
     ...entry('settings'),
@@ -31,8 +30,7 @@ module.exports = {
     filename: '[name].js'
   },
   resolve: {
-      //mainFields: ['browser', 'module', 'main'],
-      modules: ['node_modules']
+      aliasFields: ['browser'],
   },
   node: {
     "voc-dom": "empty",
@@ -48,19 +46,15 @@ module.exports = {
     // ]
   },
   plugins: [
+    new webpack.DefinePlugin({
+        'process.env.COMPILE_ENV': JSON.stringify('webpack')
+    }),
     new CleanPlugin(),
-    new ShellPlugin({ // for browserify workaround - compile voc-api before 
-      onBuildStart: "browserify ./node_modules/voc-api/vocabulary-api.js -o ./src/vocabulary-api.js"
-    }), 
     new CopyPlugin([
       // ...copy({
       //   from: 'html/',
       //   to: 'html/'
       // }),
-      ...copy({
-        from: 'vocabulary-api.js', // for browserify workaround
-        to: 'api/vocabulary-api.js'
-      }),
       ...copy({
         from: 'icons/',
         to: 'icons/'
