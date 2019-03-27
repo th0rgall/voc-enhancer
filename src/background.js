@@ -1,7 +1,12 @@
-//import Db from './settings';
+import Db from './settings';
 import translate from './api/translate.js'
 import VocAPI from '../node_modules/voc-api';
-//const db = new Db();
+// var because of //https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/runtime/getBackgroundPage
+var db = new Db(); 
+window.db = db; // make it shareable
+
+db.loadAll()
+db.get("externalLinks").then(console.log);
 
 // set up VocAPI
 const vocapi = new VocAPI();

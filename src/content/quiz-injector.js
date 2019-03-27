@@ -54,6 +54,7 @@ function initialize() {
             quizInjection.classList.add('ve-quiz-injection');
             quizInjection.appendChild(createTranslation(word));
             quizInjection.appendChild(createLinks(word));
+            // createLinks(word).then(result => quizInjection.appendChild(result));
             descriptionParent.children[0].insertBefore(
                 quizInjection, descriptionParent.querySelector('.more')); 
         } else {

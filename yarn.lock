@@ -3437,8 +3437,8 @@ vm-browserify@0.0.4:
     indexof "0.0.1"
 
 voc-api@th0rgall/voc-api:
-  version "0.1.0"
-  resolved "https://codeload.github.com/th0rgall/voc-api/tar.gz/b40deddab070e5d9e3792e4e867b4700117313d1"
+  version "0.1.1"
+  resolved "https://codeload.github.com/th0rgall/voc-api/tar.gz/181e46d9ccf0293f035b759634b43f891515ea77"
   dependencies:
     underscore "^1.9.1"
     voc-dom th0rgall/voc-dom

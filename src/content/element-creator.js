@@ -1,6 +1,8 @@
 import externalLinks from "../externalLinks.js";
 import {langs} from "../api/languages.js";
 import translate from "../api/translate.js";
+import Db from "../settings.js"
+const db = new Db();
 
 /**
  * Creates a translation DOM element.
@@ -135,21 +137,27 @@ function createTranslation(word, color) {
 function createLinks(word) {
     const container = document.createElement('span');
     container.classList.add('ve-links');
-    Object.keys(externalLinks).map(k => externalLinks[k]).forEach(link => {
-        const ref = document.createElement('a');
-        ref.href = link.getLink(word);
-        ref.target = '_blank';
-        ref.rel = 'noopener noreferrer';
-        ref.classList.add('ve-external-link');
-        ref.setAttribute("title", link.title);
-        container.appendChild(ref);
+    // const links = await db.get("externalLinks");
+    const links = ["duckduckgo_images"];
+    Object.keys(externalLinks)
+        .filter(k => 
+            links.find(e => e === k)
+        )
+        .map(k => externalLinks[k]).forEach(link => {
+            const ref = document.createElement('a');
+            ref.href = link.getLink(word);
+            ref.target = '_blank';
+            ref.rel = 'noopener noreferrer';
+            ref.classList.add('ve-external-link');
+            ref.setAttribute("title", link.title);
+            container.appendChild(ref);
 
-        const icon = document.createElement('img');
-        icon.src = chrome.runtime.getURL(link.icon);
-        ref.appendChild(icon);
+            const icon = document.createElement('img');
+            icon.src = chrome.runtime.getURL(link.icon);
+            ref.appendChild(icon);
 
-    });
-    return container;
+        });
+        return container;
 }
 
 export {

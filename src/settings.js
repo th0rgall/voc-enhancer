@@ -10,7 +10,7 @@ const DEFAULT_SETTINGS = {
 
 export default class Db {
     constructor () {
-      this.loadAll();
+      //this.loadAll();
     }
 
     get (key, defaultValue) {
@@ -20,7 +20,7 @@ export default class Db {
           if (process.env.DEBUG) {
             console.info(`Retrieved value ${key}: `, result[key]);
           }
-          return transformLegacyValue(result[key]);
+          return result[key];
         });
     }
   
@@ -37,7 +37,7 @@ export default class Db {
           }
           return Object.keys(result).reduce((results, key) => {
             return Object.assign(results, {
-              [key]: transformLegacyValue(result[key])
+              [key]: result[key]
             });
           }, {});
         });
@@ -82,12 +82,6 @@ export default class Db {
           this.load(k, DEFAULT_SETTINGS[k]);
         }
       }
-  
-      for (const k in CORE_SETTINGS) {
-        if (CORE_SETTINGS.hasOwnProperty(k)) {
-          this.load(k, CORE_SETTINGS[k]);
-        }
-      }
     }
   
     updateSetting (key, state, callback, condition) {
@@ -100,7 +94,7 @@ export default class Db {
     }
   
     resetAllSettings () {
-      const allSettings = { ...DEFAULT_SETTINGS, ...CORE_SETTINGS };
+      const allSettings = { ...DEFAULT_SETTINGS};
       return this.setMultiple(allSettings)
         .then(() => {
           //bugsnagClient.leaveBreadcrumb('Completed reset all settings');
