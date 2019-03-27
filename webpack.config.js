@@ -6,6 +6,7 @@ const fs = require('fs');
 const CleanPlugin = require('clean-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
 const FileManagerPlugin = require('filemanager-webpack-plugin');
+const ShellPlugin = require('webpack-shell-plugin-alt');
 // const { BugsnagSourceMapUploaderPlugin } = require('webpack-bugsnag-plugins');
 // const { EnvironmentPlugin } = require('webpack');
 // const log = require('webpack-log')({ name: 'wds' });
@@ -48,19 +49,26 @@ module.exports = {
   },
   plugins: [
     new CleanPlugin(),
+    new ShellPlugin({ // for browserify workaround - compile voc-api before 
+      onBuildStart: "browserify ./node_modules/voc-api/vocabulary-api.js -o ./src/vocabulary-api.js"
+    }), 
     new CopyPlugin([
       // ...copy({
       //   from: 'html/',
       //   to: 'html/'
       // }),
-      {
+      ...copy({
+        from: 'vocabulary-api.js', // for browserify workaround
+        to: 'api/vocabulary-api.js'
+      }),
+      ...copy({
         from: 'icons/',
         to: 'icons/'
-      },
-      {
+      }),
+      ...copy({
         from: 'styles.css',
         to: 'styles.css'
-      },
+      }),
       {
         from: 'manifest.json',
         to: 'chrome/manifest.json',
@@ -76,8 +84,8 @@ module.exports = {
       onEnd: [
         {
           copy: [
-            { source: 'dist/**/*', destination: 'dist/chrome/' },
-            { source: 'dist/**/*', destination: 'dist/firefox/' }
+            { source: 'dist/**/{*.js,*.js.map}', destination: 'dist/chrome/' },
+            { source: 'dist/**/{*.js,*.js.map}', destination: 'dist/firefox/' }
           ]
         },
         production && {
@@ -96,13 +104,13 @@ module.exports = {
           ]
         }
       ]
-    }),
-    new ChromeExtensionReloader({
-      entries: { 
-        contentScript: ['common', 'api/translate', ...entryContentNames()],
-        background: 'background'
-      }
-    })
+    })//,
+    // new ChromeExtensionReloader({
+    //   entries: { 
+    //     contentScript: ['common', 'api/translate', ...entryContentNames()],
+    //     background: 'background'
+    //   }
+    // })
 ]
 };
 

@@ -16,3 +16,5 @@ function initialize() {
         };
     });
 }
+
+Window.initialize = initialize;

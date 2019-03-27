@@ -1,7 +1,7 @@
 if (document.readyState === "complete" ) { 
-    initialize();
+    Window.initialize();
 } else {
-    window.addEventListener('load', initialize);
+    window.addEventListener('load', Window.initialize);
 }
 
 /**
@@ -54,3 +54,5 @@ function renderTo(selector, renderer) {
       renderer(elems[i]);
     }
 }
+
+Window.render = render;

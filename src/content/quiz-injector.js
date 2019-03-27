@@ -1,6 +1,8 @@
 
+import { createTranslation, createLinks } from './element-creator';
+
 function initialize() {
-    render('.questionPane > div:last-child .blurb-container', {observe: true, rootSelector: '.questionPane'}, (descriptionParent) => {
+    Window.render('.questionPane > div:last-child .blurb-container', {observe: true, rootSelector: '.questionPane'}, (descriptionParent) => {
 
         function getWord() {
             // get word
@@ -59,3 +61,5 @@ function initialize() {
         }
         });
 }
+
+Window.initialize = initialize;

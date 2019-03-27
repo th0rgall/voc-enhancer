@@ -1,6 +1,6 @@
 const makeLinkGetter = (f) => ((w) => f(encodeURIComponent(w)));
 
-export default externalLinks = {
+export default {
         "duckduckgo_images": {
             "title": 'DuckDuckGo Image Search',
             "icon": 'icons/ddg-favicon.ico',

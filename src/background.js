@@ -1,6 +1,7 @@
-import Db from './settings';
-import VocAPI from '../node_modules/voc-api';
-const db = new Db();
+//import Db from './settings';
+import translate from './api/translate.js'
+//import VocAPI from '../node_modules/voc-api';
+//const db = new Db();
 
 // set up VocAPI
 const vocapi = new VocAPI();
@@ -35,7 +36,7 @@ function contextMenuExists(id) {
   return !!contextMenus[id];
 }
 
-logError = (err) => {
+function logError(err) {
   console.log("API Error: " + err);
 }
 
@@ -71,7 +72,9 @@ chrome.runtime.onMessage.addListener(
     } else if (type === 'selection') {
       checkSelection(selection);
     } else if (type === 'translation') {
-      VocAPI.translation(msg.url, msg.referrer).then((res) => sendResponse(res));
+      translate.apply(null, msg.args).then(sendResponse).catch(err => {
+          console.error(err);
+      });
       return true;
     }
   });

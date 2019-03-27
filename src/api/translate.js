@@ -13,6 +13,8 @@
 /* eslint-disable */
 // BEGIN
 
+import * as Language from './languages.js';
+
 function sM(a) {
     var b;
     if (null !== yr)
@@ -235,7 +237,7 @@ function translate(text, opts) {
 
     var e;
     [opts.from, opts.to].forEach(function (lang) {
-        if (lang && !isSupported(lang)) {
+        if (lang && !Language.isSupported(lang)) {
             e = new Error();
             e.code = 400;
             e.message = 'The language \'' + lang + '\' is not supported';
@@ -250,8 +252,8 @@ function translate(text, opts) {
     opts.from = opts.from || 'auto';
     opts.to = opts.to || 'en';
 
-    opts.from = getCode(opts.from);
-    opts.to = getCode(opts.to);
+    opts.from = Language.getCode(opts.from);
+    opts.to = Language.getCode(opts.to);
 
     return getGoogleToken(text).then(function (token) {
         var url = 'https://translate.google.com/translate_a/single';
@@ -359,3 +361,5 @@ function translate(text, opts) {
         });
     });
 }
+
+export default translate;

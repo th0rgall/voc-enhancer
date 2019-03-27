@@ -1,4 +1,6 @@
-import externalLinks from "../externalLinks";
+import externalLinks from "../externalLinks.js";
+import {langs} from "../api/languages.js";
+import translate from "../api/translate.js";
 
 /**
  * Creates a translation DOM element.
@@ -44,7 +46,10 @@ function createTranslation(word, color) {
         // Jan 17, 19:TODO: fix pos by using api, progress no longer in page
         if (domPos && domPos.dataset.progress) pos = JSON.parse(domPos.dataset.progress)[0].pos;
 
-        translate(word, {from: 'en', to: target, pos: pos}).then(res => {
+        chrome.runtime.sendMessage({
+            type: 'translation',
+            args: [word, {from: 'en', to: target, pos: pos}]
+        }, (res) => {
 
             const tDispFun = (t) => {
                 if (t.pos) {
@@ -89,8 +94,6 @@ function createTranslation(word, color) {
                 }).forEach(span => {if (span) return alts.appendChild(span)});
                 textContainer.appendChild(alts);
             }
-        }).catch(err => {
-            console.error(err);
         });
     }
 
@@ -132,7 +135,7 @@ function createTranslation(word, color) {
 function createLinks(word) {
     const container = document.createElement('span');
     container.classList.add('ve-links');
-    Object.keys(externalLinks).map(k => a[k]).forEach(link => {
+    Object.keys(externalLinks).map(k => externalLinks[k]).forEach(link => {
         const ref = document.createElement('a');
         ref.href = link.getLink(word);
         ref.target = '_blank';
@@ -147,4 +150,9 @@ function createLinks(word) {
 
     });
     return container;
+}
+
+export {
+    createTranslation,
+    createLinks
 }

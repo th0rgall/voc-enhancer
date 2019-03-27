@@ -26,7 +26,8 @@
     "voc-api": "th0rgall/voc-api",
     "webextension-polyfill": "^0.4.0",
     "webpack": "^4.29.6",
-    "webpack-chrome-extension-reloader": "^1.2.0"
+    "webpack-chrome-extension-reloader": "^1.2.0",
+    "webpack-shell-plugin-alt": "^1.3.0"
   },
   "devDependencies": {
     "webpack-cli": "^3.2.3"

@@ -26,7 +26,7 @@
                 "content/voc-adder.js"
             ],
             "css": [
-                "content/styles.css"
+                "styles.css"
             ]
         },
         {
@@ -44,14 +44,13 @@
                 "*://www.vocabulary.com/lists/*/practice*"
             ],
             "js": [
-                "api/languages.js",
                 "api/translate.js",
                 "content/element-creator.js",
                 "content/quiz-injector.js",
-                "content/common.js"
+                "common.js"
             ],
             "css": [
-                "content/styles.css"
+                "styles.css"
             ]
         },
         {
@@ -59,14 +58,13 @@
                 "*://*.vocabulary.com/dictionary/*"
             ],
             "js": [
-                "api/languages.js",
                 "api/translate.js",
                 "content/element-creator.js",
                 "content/definition-injector.js",
-                "content/common.js"
+                "common.js"
             ],
             "css": [
-                "content/styles.css"
+                "styles.css"
             ]
         },
         {
@@ -77,14 +75,13 @@
                 "*://*.vocabulary.com/lists/*/edit"
             ],
             "js": [
-                "api/languages.js",
                 "api/translate.js",
                 "content/element-creator.js",
                 "content/list-injector.js",
-                "content/common.js"
+                "common.js"
             ],
             "css": [
-                "content/styles.css"
+                "styles.css"
             ]
         }
     ],

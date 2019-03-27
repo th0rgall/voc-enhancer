@@ -1,5 +1,5 @@
-
-    // insert translation element
+import { createTranslation } from './element-creator';
+// insert translation element
 vocclient.render('#pageContent', {observe: true, firstPass: true}, (pageContent) => {
     // get word
     let wordEl = document.querySelector('div[data-word]');

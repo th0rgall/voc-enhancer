@@ -149,3 +149,5 @@ function getCode(desiredLang) {
 function isSupported(desiredLang) {
     return Boolean(getCode(desiredLang));
 }
+
+export {langs, getCode, isSupported};
