@@ -17,4 +17,4 @@ function initialize() {
     });
 }
 
-Window.initialize = initialize;
+window.initialize = initialize;

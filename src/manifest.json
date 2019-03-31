@@ -11,6 +11,11 @@
         "64": "icons/favicon-64x64.png",
         "128": "icons/favicon-128x128.png"
     },
+    "options_ui": {
+        "page": "options/options.html",
+        "browser_style": true,
+        "chrome_style": true
+      },
     "background": {
         "scripts": [
             "background.js"

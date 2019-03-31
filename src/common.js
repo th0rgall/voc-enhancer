@@ -1,7 +1,9 @@
+window.render = render;
+
 if (document.readyState === "complete" ) { 
-    Window.initialize();
+    window.initialize();
 } else {
-    window.addEventListener('load', Window.initialize);
+    window.addEventListener('load', window.initialize);
 }
 
 /**
@@ -54,5 +56,3 @@ function renderTo(selector, renderer) {
       renderer(elems[i]);
     }
 }
-
-Window.render = render;

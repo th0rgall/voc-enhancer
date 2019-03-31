@@ -19,6 +19,7 @@ module.exports = {
     ...entry('common'),
     ...entry('settings'),
     ...entry('background'),
+    ...entry('options/options'),
     ...entryContentScripts()
   },
   target: 'web',
@@ -62,6 +63,10 @@ module.exports = {
       ...copy({
         from: 'styles.css',
         to: 'styles.css'
+      }),
+      ...copy({
+        from: 'options/options.html',
+        to: 'options/options.html'
       }),
       {
         from: 'manifest.json',

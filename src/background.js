@@ -3,7 +3,7 @@ import translate from './api/translate.js'
 import VocAPI from '../node_modules/voc-api';
 // var because of //https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/runtime/getBackgroundPage
 var db = new Db(); 
-window.db = db; // make it shareable
+window.db = db; // make it accessible by other priviledged extension pages
 
 db.loadAll()
 // TODO: remove later!
