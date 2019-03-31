@@ -53,8 +53,8 @@ function initialize() {
             let quizInjection = document.createElement('div');
             quizInjection.classList.add('ve-quiz-injection');
             quizInjection.appendChild(createTranslation(word));
-            quizInjection.appendChild(createLinks(word));
-            // createLinks(word).then(result => quizInjection.appendChild(result));
+            //quizInjection.appendChild(createLinks(word));
+            createLinks(word).then(result => quizInjection.appendChild(result)).catch(console.log);
             descriptionParent.children[0].insertBefore(
                 quizInjection, descriptionParent.querySelector('.more')); 
         } else {

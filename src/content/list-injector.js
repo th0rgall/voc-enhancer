@@ -6,8 +6,8 @@ function initialize() {
         for (let i = 0; i < lis.length; i++) {
             const current = lis[i];
             const word = current.getAttribute('word');
-            current.insertBefore(createLinks(word), current.children[1]);
-
+            createLinks(word).then(result => current.insertBefore(result, current.children[1]));;
+            
             // disable source links that won't work anyway
             let link = current.querySelector("a.source");
             if (link && link.getAttribute("href") === "https://corpus.vocabulary.com/go/0") {

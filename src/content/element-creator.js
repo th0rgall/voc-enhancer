@@ -134,11 +134,11 @@ function createTranslation(word, color) {
     return translationEl;
 }
 
-function createLinks(word) {
+async function createLinks(word) {
     const container = document.createElement('span');
     container.classList.add('ve-links');
-    // const links = await db.get("externalLinks");
-    const links = ["duckduckgo_images"];
+    const links = await db.get("externalLinks");
+    //const links = ["duckduckgo_images"];
     Object.keys(externalLinks)
         .filter(k => 
             links.find(e => e === k)

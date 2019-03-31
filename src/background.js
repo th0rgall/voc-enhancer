@@ -6,6 +6,9 @@ var db = new Db();
 window.db = db; // make it shareable
 
 db.loadAll()
+// TODO: remove later!
+db.resetAllSettings();
+db.get("externalLinks").then(console.log);
 db.get("externalLinks").then(console.log);
 
 // set up VocAPI

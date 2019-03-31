@@ -98,5 +98,11 @@
     ],
     "web_accessible_resources": [
         "icons/*"
-    ]
+    ],
+    "browser_specific_settings": {
+        "gecko": {
+            "id": "vocenhancer@extension.org",
+            "strict_min_version": "42.0"
+        }
+    }
 }

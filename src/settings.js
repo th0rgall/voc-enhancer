@@ -4,7 +4,7 @@ import externalLinks from "./externalLinks";
 
 const DEFAULT_SETTINGS = {
     // order is important
-    externalLinks: ["duckduckgo_images", "google_images", "thesaurus", "urban_dictionary"],
+    externalLinks: ["duckduckgo_images", "giphy_images", "youglish", "thesaurus_com", "urban_dictionary", "google_define"],
     showTranslations: true
 };
 
@@ -101,7 +101,7 @@ export default class Db {
         })
         .catch((e) => {
           //bugsnagClient.notify(e);
-          alert('Failed to reset settings. Please contact support@toggl.com for assistance or try re-installing the extension.');
+          alert('Failed to reset settings. Please try re-installing the extension.');
         });
     }
   
