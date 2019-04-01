@@ -3,7 +3,6 @@
     "name": "Vocabulary.com Enhancer",
     "short_name": "Voc.com Enhancer",
     "author": "Thor Galle",
-    "version": "0.4.9",
     "description": "Translations and other useful features for vocabulary.com (unofficial)",
     "icons": {
         "16": "icons/favicon-16x16.png",
@@ -12,9 +11,7 @@
         "128": "icons/favicon-128x128.png"
     },
     "options_ui": {
-        "page": "options/options.html",
-        "browser_style": true,
-        "chrome_style": true
+        "page": "options/options.html"
       },
     "background": {
         "scripts": [
@@ -103,11 +100,5 @@
     ],
     "web_accessible_resources": [
         "icons/*"
-    ],
-    "browser_specific_settings": {
-        "gecko": {
-            "id": "vocenhancer@extension.org",
-            "strict_min_version": "42.0"
-        }
-    }
+    ]
 }

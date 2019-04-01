@@ -5,8 +5,10 @@
   "description": "Show translations in the word game & on definitions. Add words to your lists from any web page.",
   "scripts": {
     "build": "make",
+    "start": "yarn dev",
     "web-ext": "web-ext run  -s ./",
-    "dev": "npx webpack --config webpack.config.js --mode development"
+    "dev": "npx webpack --config webpack.config.js --mode development",
+    "prod": "npx webpack --config webpack.config.js --mode production"
   },
   "keywords": [
     "vocabulary.com",
