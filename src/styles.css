@@ -53,15 +53,19 @@
     margin-right: 10px;
 }
 
+/* base links */
 .ve-external-link > img {
     width: 100%;
     display: block;
     filter: grayscale(1);
+    /* base opacity */
     opacity: 0.3;
 }
 
-.ve-external-link:hover > img {
+/* light up all links w/ color */
+.ve-links:hover img {
     transition: all .3s;
+    transition-delay: .07s;
     filter: grayscale(0);
     opacity: 1;
 }
@@ -78,11 +82,14 @@
     margin-top: 0.5em;
 }
 
+/* Other opacities for quiz injection */
 .ve-quiz-injection .ve-external-link > img {
-    opacity: 0.5;
+    /* opacity: 0.5; */
+    /* intermediary opacity does not make sense when they all light up */
 }
 
 .ve-quiz-injection .ve-external-link:hover > img {
     opacity: 1;
+    filter: drop-shadow(0px 0px 3px #fff)
 }
 
