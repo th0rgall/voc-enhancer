@@ -13,11 +13,27 @@ const FileManagerPlugin = require('filemanager-webpack-plugin');
 const ChromeExtensionReloader = require('webpack-chrome-extension-reloader');
 const production = false;
 
+const copyFromSourceFiles = [
+  "options/options.html",
+  "icons/",
+  "styles.css"];
+
+const distributeFiles = [
+  "options/",
+  "api/",
+  "content/",
+  "background.js",
+  "common.js",
+  "icons/",
+  "styles.css"
+];
+
+
 module.exports = {
   entry: {
     ...entry('api/translate'), // todo: intergrateinto background
+    ...entry('api/store'),
     ...entry('common'),
-    ...entry('settings'),
     ...entry('background'),
     ...entry('options/options'),
     ...entryContentScripts()
@@ -52,23 +68,9 @@ module.exports = {
         'process.env.DEBUG': JSON.stringify('true')
     }),
     new CleanPlugin(),
+    // copy plugin copies from src to build
     new CopyPlugin([
-      // ...copy({
-      //   from: 'html/',
-      //   to: 'html/'
-      // }),
-      ...copy({
-        from: 'icons/',
-        to: 'icons/'
-      }),
-      ...copy({
-        from: 'styles.css',
-        to: 'styles.css'
-      }),
-      ...copy({
-        from: 'options/options.html',
-        to: 'options/options.html'
-      }),
+      ...copy_same_arr.apply(null, copyFromSourceFiles),
       {
         from: 'manifest.json',
         to: 'chrome/manifest.json',
@@ -78,28 +80,35 @@ module.exports = {
         from: 'manifest.json',
         to: 'firefox/manifest.json',
         transform: transformManifest('firefox')
-      }
+      },
+      // copy plugin against dist context
+      ...(copy_same_arr.apply(null, distributeFiles))
+          .map(f => ({...f, context: path.resolve(__dirname, 'dist/')}))
     ]),
+    // fm plugin manages all dirs. Used here for the build dir.
     new FileManagerPlugin({
       onEnd: [
-        {
-          copy: [
-            { source: 'dist/**/{*.js,*.js.map}', destination: 'dist/chrome/' },
-            { source: 'dist/**/{*.js,*.js.map}', destination: 'dist/firefox/' }
+        !production && {
+          delete: [
+            ...distributeFiles.reduce((acc, of) => {
+              const base = 'dist/' + of;
+              return of.endsWith('.js') ? [...acc, base, base + '.map'] : [...acc, base]
+            }, [])
           ]
         },
         production && {
           delete: [
-            'dist/**/*.js.map'
+            'dist/**/*.js.map',
+            ...outFiles
           ],
           archive: [
             {
               source: 'dist/chrome',
-              destination: `dist/toggl-button-chrome-${version}.zip`
+              destination: `dist/voc-enhancer-chrome-${version}.zip`
             },
             {
               source: 'dist/firefox',
-              destination: `dist/toggl-button-firefox-${version}.zip`
+              destination: `dist/voc-enhancer-firefox-${version}.zip`
             }
           ]
         }
@@ -137,7 +146,20 @@ function entry (name) {
   };
 }
 
-function copy (o) {
+function copy_same_arr() {
+  return [].concat.apply([], Array.from(arguments).map(a => copy_same(a)));
+}
+
+// ff_chr copy under same name
+function copy_same(i) {
+  return copy_FF_CHR({
+    from: i,
+    to: i
+  });
+}
+
+// copy to both chrome & firefox
+function copy_FF_CHR (o) {
   return [
     {
       ...o,

@@ -1,5 +1,5 @@
 const browser = require('webextension-polyfill');
-import externalLinks from '../externalLinks';
+import externalLinks from '../shared/externalLinks';
 
 window.addEventListener('DOMContentLoaded', (event) => {
     const background = browser.runtime.getBackgroundPage();
@@ -27,6 +27,9 @@ window.addEventListener('DOMContentLoaded', (event) => {
                 
                 // change handlers for input
                 checkInput.addEventListener("change", (event) => {
+                    // NOTE: this works on version of links first loaded here.
+                    // assumes activeLinks does not change. If it might in between
+                    // two questions, a db call should be done every time
                     const linkExists = activeLink => activeLink === l;
                     // TODO: take into account order
                     if (checkInput.checked && !activeLinks.find(linkExists)) {

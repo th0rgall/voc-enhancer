@@ -1,7 +1,7 @@
-import externalLinks from "../externalLinks.js";
+import externalLinks from "../shared/externalLinks.js";
 import {langs} from "../api/languages.js";
 import translate from "../api/translate.js";
-import Db from "../settings.js"
+import Db from "../api/store";
 const db = new Db();
 
 /**
@@ -138,7 +138,7 @@ async function createLinks(word) {
     const container = document.createElement('span');
     container.classList.add('ve-links');
     const links = await db.get("externalLinks");
-    //const links = ["duckduckgo_images"];
+
     Object.keys(externalLinks)
         .filter(k => 
             links.find(e => e === k)

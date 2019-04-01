@@ -1,10 +1,10 @@
 {
     "manifest_version": 2,
-    "name": "Vocabulary.com Enhancer (unofficial)",
+    "name": "Vocabulary.com Enhancer",
     "short_name": "Voc.com Enhancer",
     "author": "Thor Galle",
     "version": "0.4.9",
-    "description": "See translations in the word game & on definitions. Add words everywhere.",
+    "description": "Translations and other useful features for vocabulary.com (unofficial)",
     "icons": {
         "16": "icons/favicon-16x16.png",
         "32": "icons/favicon-32x32.png",

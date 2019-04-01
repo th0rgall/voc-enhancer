@@ -1,4 +1,4 @@
-import Db from './settings';
+import Db from './api/store';
 import translate from './api/translate.js'
 import VocAPI from '../node_modules/voc-api';
 // var because of //https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/runtime/getBackgroundPage
