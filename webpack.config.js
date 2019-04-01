@@ -28,6 +28,8 @@ const distributeFiles = [
   "styles.css"
 ];
 
+const distributeGlobs = distributeFiles.map(f => f.endsWith('/') ? f + "*" : f);
+
 
 module.exports = {
   entry: {
@@ -80,14 +82,22 @@ module.exports = {
         from: 'manifest.json',
         to: 'firefox/manifest.json',
         transform: transformManifest('firefox')
-      },
-      // copy plugin against dist context
-      ...(copy_same_arr.apply(null, distributeFiles))
-          .map(f => ({...f, context: path.resolve(__dirname, 'dist/')}))
+      }
     ]),
     // fm plugin manages all dirs. Used here for the build dir.
     new FileManagerPlugin({
       onEnd: [
+        {
+          // needs to be with globs in 1 source, otherwise folder structure is not retained...
+          copy: 
+            [{
+              source: 'dist/{' + distributeGlobs.join() + '}',
+              destination: 'dist/chrome/'
+          }, {
+              source: 'dist/{' + distributeGlobs.join() + '}',
+              destination: 'dist/firefox/'
+          }]
+        },
         !production && {
           delete: [
             ...distributeFiles.reduce((acc, of) => {
