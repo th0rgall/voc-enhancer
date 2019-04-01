@@ -48,7 +48,8 @@ module.exports = {
   },
   plugins: [
     new webpack.DefinePlugin({
-        'process.env.COMPILE_ENV': JSON.stringify('webpack')
+        'process.env.COMPILE_ENV': JSON.stringify('webpack'),
+        'process.env.DEBUG': JSON.stringify('true')
     }),
     new CleanPlugin(),
     new CopyPlugin([
