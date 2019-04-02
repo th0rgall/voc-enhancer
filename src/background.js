@@ -84,6 +84,10 @@ chrome.runtime.onMessage.addListener(
           console.error(err);
       });
       return true;
+    } else if (type === 'getList') {
+      // NOTE: The argument for sendResponse should be any JSON-ifiable object.
+      vocapi.getList(msg.id).then(sendResponse).catch(console.err);
+      return true; // NOTE: necessary to signal asynchronous behavior of sendResponse
     }
   });
 

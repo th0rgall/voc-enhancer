@@ -45,7 +45,6 @@
                 "*://www.vocabulary.com/lists/*/practice*"
             ],
             "js": [
-                "api/translate.js",
                 "content/element-creator.js",
                 "content/quiz-injector.js",
                 "common.js"

@@ -1,7 +1,36 @@
 
 import { createTranslation, createLinks } from './element-creator';
+import browser from 'webextension-polyfill';
+
+/**
+ * Returns the list id of the practiced list if a specific list is being practiced 
+ * (url form: https://www.vocabulary.com/lists/${id}/practice)
+ * Otherwise returns false
+ */
+function getListId() {
+    let match = /\/lists\/(\d+)\/practice/.exec(document.location.pathname);
+    if (match) {
+        return match[1];
+    } else {
+        return false;
+    }
+}
 
 function initialize() {
+
+    // preload list examples once if available
+    const id = getListId();
+    let list;
+    if (id) {
+        browser.runtime.sendMessage({
+            type: 'getList',
+            id
+        }).then(
+            apiList => {list = apiList}
+        )
+        .catch(console.err);
+    }
+
     window.render('.questionPane > div:last-child .blurb-container', {observe: true, rootSelector: '.questionPane'}, (descriptionParent) => {
 
         function getWord() {
@@ -50,13 +79,46 @@ function initialize() {
 
         let word = getWord();
         if (word) {
+            // inject translation
             let quizInjection = document.createElement('div');
             quizInjection.classList.add('ve-quiz-injection');
             quizInjection.appendChild(createTranslation(word));
-            //quizInjection.appendChild(createLinks(word));
+
+            // inject links
             createLinks(word).then(result => quizInjection.appendChild(result)).catch(console.log);
             descriptionParent.children[0].insertBefore(
                 quizInjection, descriptionParent.querySelector('.more')); 
+            
+                // [{"word":"zilch","lang":"en",
+                // "description":"Added from URL: https://forums.macrumors.com/threads/usb-c-powerba… on Wednesday 6 June 2018 at 14:08.",
+                // "example":{"text":"So far, zilch.","offsets":[8,13]},"definition":"a quantity of no importance","shortdefinition":"a quantity of no importance",
+                // "audio":["D/15IWYVT54ZU23"],"ffreq":4.6965513531891756E-4}}]
+
+            // inject example
+            if (list) {
+                let listWordObj = list.words.find(listWord => listWord.word === word);
+                if (listWordObj && listWordObj.example) {
+                    let exampleElement = document.createElement('p');
+                    exampleElement.classList.add("ve-example-sentence");
+                    // exampleElement.innerText = 
+                    // `"${listWordObj.example.text}"`;
+
+                    const extText = listWordObj.example.text;
+                    const off = listWordObj.example.offsets; 
+                    exampleElement.innerHTML = 
+                        `"${extText.slice(0, off[0])}<span class="ve-example-source-word">${
+                                extText.slice(off[0], off[1])}</span>${extText.slice(off[1])}"`;
+
+                    // first child is the .blurbPane
+                    descriptionParent.children[0].appendChild(exampleElement);
+
+                    let sourceElement = document.createElement('div');
+                    sourceElement.classList.add("ve-example-source");
+                    // sourceElement.innerText = `— ${list.name}`;
+                    sourceElement.innerText = "— example from the list";
+                    descriptionParent.children[0].appendChild(sourceElement);
+                }
+            }
         } else {
             throw "Could not find word from page";
         }
