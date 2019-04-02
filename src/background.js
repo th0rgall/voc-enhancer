@@ -284,7 +284,7 @@ function addToNewHandler(info, tab) {
 function createNotification(notificationId, title, message, onClick) {
   chrome.notifications.create(notificationId, {
     type: "basic",
-    iconUrl: "icons/favicon-114x114.png",
+    iconUrl: "icons/favicon-128x128.png",
     title: title,
     message: message
   });

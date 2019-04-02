@@ -1,3 +1,5 @@
+import { createLinks } from './element-creator';
+
 function initialize() {
     // insert translation element
     render('#wordlist', {observe: false}, (wordlist) => {

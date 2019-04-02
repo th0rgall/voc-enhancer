@@ -3452,7 +3452,7 @@ voc-dom@th0rgall/voc-dom:
 
 voc-http@th0rgall/voc-http:
   version "1.0.3"
-  resolved "https://codeload.github.com/th0rgall/voc-http/tar.gz/6f8e21f11e63fe1c5ba56127ff0c07a7ff85da20"
+  resolved "https://codeload.github.com/th0rgall/voc-http/tar.gz/8618cd52bca461523ba2e5db1d70588dfdcfb39f"
   dependencies:
     request "^2.88.0"
     request-promise "^4.2.2"
