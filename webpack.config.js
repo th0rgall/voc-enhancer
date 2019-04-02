@@ -106,13 +106,12 @@ module.exports = (env, argv) => {
                 destination: 'dist/firefox/'
             }]
           },
-          !production && {
+          {
             delete: deleteFiles
           },
           production && {
             delete: [
-              'dist/**/*.js.map',
-              ...deleteFiles
+              'dist/**/*.js.map'
             ],
             archive: [
               {

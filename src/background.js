@@ -22,13 +22,13 @@ function createContextMenu() {
   if (arguments[0] && arguments[0].id) {
     // TODO: not sure if this will work properly, is creation synchronous or asynchrounous?
     // take in to account calll back and the runtime error?
-    chrome.contextMenus[arguments[0].id] = chrome.contextMenus.create.apply(null, arguments);
+    contextMenus[arguments[0].id] = chrome.contextMenus.create.apply(null, arguments);
   }
 }
 
 function updateContextMenu() {
   if (arguments[0] && contextMenuExists(arguments[0])) {
-    chrome.contextMenus.update.apply(mull, arguments);
+    chrome.contextMenus.update.apply(null, arguments);
   }
 
 }
@@ -50,7 +50,7 @@ function logError(err) {
 
 function checkLogin() {
   if (loggedIn && contextMenuExists("addtoParent")) {
-    return true
+    return true;
   } else {
     vocapi.checkLogin()
     .then(() => {
@@ -103,7 +103,7 @@ function createContextMenus() {
 
   vocapi.getLists()
   .then((lists) => {
-    contextMenus.addtoParent = createContextMenu({id: "addtoParent", title: addToText, contexts: ["selection"]});
+    createContextMenu({id: "addtoParent", title: addToText, contexts: ["selection"]});
     // create "start learning" context menu
     createContextMenu({id: "learnvoc", parentId: "addtoParent", title:"Just Start Learning", contexts: ["selection"], 
     onclick: startLearning});
