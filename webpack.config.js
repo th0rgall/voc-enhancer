@@ -121,6 +121,10 @@ module.exports = (env, argv) => {
               {
                 source: 'dist/firefox',
                 destination: `dist/voc-enhancer-firefox-${pkg.version}.zip`
+              },
+              {
+                source: 'src',
+                destination: `dist/voc-enhancer-src-${pkg.version}.zip`
               }
             ]
           }
@@ -195,8 +199,8 @@ function transformManifest (browser) {
     } else if (browser === 'firefox') {
       manifest["browser_specific_settings"] = {
           "gecko": {
-              "id": "vocenhancer@extension.org",
-              "strict_min_version": "42.0"
+              "id": "{136c3870-cc04-40bc-a781-5c903ca0c381}",
+              "strict_min_version": "57.0"
           }
       };
       manifest["options_ui"]["browser_style"] = true;

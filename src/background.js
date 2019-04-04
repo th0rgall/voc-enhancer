@@ -309,7 +309,7 @@ function addNotificationClickListener(notificationId, action) {
   const closeListener = (closedId) => {
     if (closedId === notificationId) {
       // remove click listener
-      chrome.notications.onClicked.removeListener(clickListener);
+      chrome.notifications.onClicked.removeListener(clickListener);
       // remove itself (closeListener)
       chrome.notifications.onClosed.removeListener(closeListener);
     }
