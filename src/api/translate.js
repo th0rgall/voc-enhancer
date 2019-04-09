@@ -80,40 +80,7 @@ var window = {
 */
 localStorage.setItem('TKK', localStorage.getItem('TKK') || '0');
 
-function withModifiedReferrer(refererUrl, requestUrl, action) {
-    function refererListener(details) {
-        const i = details.requestHeaders.findIndex(e => e.name.toLowerCase() == "referer");
-        if (i != -1) {
-            details.requestHeaders[i].value = refererUrl;
-        } else {
-            details.requestHeaders.push({name: "referer", value: refererUrl});
-        }
-        // Firefox uses promises
-        // return Promise.resolve(details);
-        // Chrome doesn't. Todo: https://github.com/mozilla/webextension-polyfill
-    
-        // important: do create a new object, passing the modified argument does not work
-        return {requestHeaders: details.requestHeaders};
-    }
-
-    // modify headers with webRequest hook
-    chrome.webRequest.onBeforeSendHeaders.addListener(
-    refererListener, //  function
-    {urls: [requestUrl]}, // RequestFilter object
-    ["requestHeaders", "blocking"] //  extraInfoSpec
-    );
-
-    // TODO:    why not hook detach after action? async?
-    //          hook should be detached after the request was sent, automatically   
-    action(() => {
-    // detach hook
-    if (chrome.webRequest.onBeforeSendHeaders.hasListener(refererListener)) {
-        chrome.webRequest.onBeforeSendHeaders.removeListener(refererListener)
-    }
-    });
-}
-
-function httpGet(requestUrl, type, modifiedReferrer) {
+function httpGet(requestUrl, type) {
     return new Promise( (resolve, reject) => {
         var req = new XMLHttpRequest();
         //req.withCredentials = true;
@@ -135,50 +102,58 @@ function updateTKK() {
     return new Promise(function (resolve, reject) {
         var now = Math.floor(Date.now() / 3600000);
 
-        //if (Number(window.TKK.split('.')[0]) === now) {
-        if (Number(localStorage.getItem('TKK').split('.')[0]) === now) {
-            resolve();
-        } else {
-            //got('https://translate.google.com').then(function (res) {
-            httpGet('https://translate.google.com').then(function (res) {
-                // var code = res.body.match(/TKK=(.*?)\(\)\)'\);/g);
-                var code = res.body.innerHTML.match(/TKK=(.*?)\(\)\)'\);/g);
+        // apr 9, 2019: a test... it doesn't seem to need the extra request below
+        resolve();
 
-                if (code) {
-                    eval(code[0]);
-                    /* eslint-disable no-undef */
-                    if (typeof TKK !== 'undefined') {
-                        // window.TKK = TKK;
-                        // config.set('TKK', TKK);
-                        localStorage.setItem('TKK', TKK);
-                    }
-                    /* eslint-enable no-undef */
-                }
+        // //if (Number(window.TKK.split('.')[0]) === now) {
+        // if (Number(localStorage.getItem('TKK').split('.')[0]) === now) {
+        //     resolve();
+        // } else {
+        //     //got('https://translate.google.com').then(function (res) {
+        //     httpGet('https://translate.google.com').then(function (res) {
+        //         // try this one: /tkk:\'([\.\d]*?)\'/.exec()
+        //         // var code = res.body.match(/TKK=(.*?)\(\)\)'\);/g);
+        //         //var code = res.body.innerHTML.match(/TKK=(.*?)\(\)\)'\);/g);
+        //         // apr 9, 2019: this one yields a result. But it is not used?
+        //         var code = res.body.innerHTML.match(/tkk:\'([\.\d]*?)\'/g);
 
-                /**
-                 * Note: If the regex or the eval fail, there is no need to worry. The server will accept
-                 * relatively old seeds.
-                 */
+        //         if (code) {
+        //             //eval(code[0]);
+        //             window.TKK = code[0];
+        //             /* eslint-disable no-undef */
+        //             if (typeof TKK !== 'undefined') {
+        //                 // window.TKK = TKK;
+        //                 // config.set('TKK', TKK);
+        //                 localStorage.setItem('TKK', TKK);
+        //             }
+        //             /* eslint-enable no-undef */
+        //         }
 
-                resolve();
-            }).catch(function (err) {
-                var e = new Error();
-                e.code = 'BAD_NETWORK';
-                e.message = err.message;
-                reject(e);
-            });
-        }
+        //         /**
+        //          * Note: If the regex or the eval fail, there is no need to worry. The server will accept
+        //          * relatively old seeds.
+        //          */
+
+        //         resolve();
+        //     }).catch(function (err) {
+        //         var e = new Error();
+        //         e.code = 'BAD_NETWORK';
+        //         e.message = err.message;
+        //         reject(e);
+        //     });
+        // }
     });
 }
 
 function getGoogleToken(text) {
-    return updateTKK().then(function () {
+    // return updateTKK().then(function () {
         var tk = sM(text);
         tk = tk.replace('&tk=', '');
-        return {name: 'tk', value: tk};
-    }).catch(function (err) {
-        throw err;
-    });
+        return Promise.resolve({name: 'tk', value: tk});
+    // return {name: 'tk', value: tk};
+    // }).catch(function (err) {
+    //     throw err;
+    // });
 }
 
 // module.exports.get = get;

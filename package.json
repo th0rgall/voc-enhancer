@@ -1,6 +1,6 @@
 {
   "name": "voc-enhancer",
-  "version": "0.5.2",
+  "version": "0.5.3",
   "id": "testid@testorg.com",
   "description": "Show translations in the word game & on definitions. Add words to your lists from any web page.",
   "scripts": {
