@@ -6,7 +6,7 @@ windowExporter(initialize);
 function initialize() {
 
     // preload list examples once if available
-    const id = getListIdFromDocUrl();
+    const id = window.vocenhancer.getListIdFromDocUrl();
     let list;
     if (id) {
         browser.runtime.sendMessage({
