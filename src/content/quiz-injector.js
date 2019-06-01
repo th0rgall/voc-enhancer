@@ -17,7 +17,6 @@ function initialize() {
         )
         .catch(console.err);
     }
-
     window.vocenhancer.render('.questionPane > div:last-child .blurb-container', {observe: true, rootSelector: '.questionPane'}, (descriptionParent) => {
 
         function getWord() {
@@ -111,5 +110,3 @@ function initialize() {
         }
         });
 }
-
-Object.assign(window.vocenhancer, {initialize});

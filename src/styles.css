@@ -66,6 +66,14 @@
     .ve-source-link-collapse.active {
         bottom: 0;
     }
+
+    .ve-source-link-collapse-button {
+        transform: rotate(90deg) !important;
+    }
+
+    .ve-source-link-collapse-button.active {
+        transform: rotate(-90deg) !important;
+    }
 }
 
 .ve-source-link-collapse .ve-links {
@@ -176,7 +184,7 @@
 
 /* voc.com css override */
 .wordlist.notesView a.word {
-    margin-right: 10px;
+    margin-right: 10px !important;
 }
 
 /* base links */

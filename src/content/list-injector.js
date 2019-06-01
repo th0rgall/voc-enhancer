@@ -1,4 +1,5 @@
 import { createLinks, createAudioButton, windowExporter} from './element-creator';
+import browser from 'webextension-polyfill';
 windowExporter(initialize);
 
 function initialize() {
