@@ -160,7 +160,33 @@ async function createLinks(word) {
         return container;
 }
 
+/**
+ * 
+ * @param {string} audioCode 
+ */
+function createAudioButton(audioCode) {
+    // Somehow vocab.com has js in place that will detect a newly added
+    // audio <a> element, and bind the necessary event. Cool.
+    // Pure replication of the definition page.
+    const a = document.createElement("a");
+    a.dataset.audio = audioCode;
+    a.classList.add("audio", "ve-audio");
+    return a;
+}
+
+function windowExporter(...args) {
+    // assumed args are function to be put in te window.vocenhancer
+    const fObject = args.reduce((acc, f) => ({...acc, [f.name]: f}), {});
+    if (window.vocenhancer) {
+        Object.assign(window.vocenhancer, fObject);
+    } else {
+        window.vocenhancer = fObject;
+    }
+}
+
 export {
     createTranslation,
-    createLinks
+    createLinks,
+    createAudioButton,
+    windowExporter
 }

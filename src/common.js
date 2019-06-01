@@ -1,9 +1,10 @@
-window.render = render;
+import { windowExporter } from './content/element-creator';
+windowExporter(render, renderTo, getListIdFromDocUrl);
 
-if (document.readyState === "complete" ) { 
-    window.initialize();
+if (document.readyState === "complete" ) {
+    window.vocenhancer.initialize();
 } else {
-    window.addEventListener('load', window.initialize);
+    window.addEventListener('load', window.vocenhancer.initialize);
 }
 
 /**
@@ -54,5 +55,19 @@ function renderTo(selector, renderer) {
     }
     for (i = 0, len = elems.length; i < len; i += 1) {
       renderer(elems[i]);
+    }
+}
+
+/**
+ * Returns the list id of the practiced list if a specific list is being practiced 
+ * (url form: https://www.vocabulary.com/lists/${id}/practice)
+ * Otherwise returns false
+ */
+function getListIdFromDocUrl() {
+    let match = /\/lists\/(\d+)(?:\/practice)?/.exec(document.location.pathname);
+    if (match) {
+        return match[1];
+    } else {
+        return false;
     }
 }

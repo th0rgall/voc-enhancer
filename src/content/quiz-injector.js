@@ -1,25 +1,12 @@
 
-import { createTranslation, createLinks } from './element-creator';
+import { createTranslation, createLinks, windowExporter } from './element-creator';
 import browser from 'webextension-polyfill';
-
-/**
- * Returns the list id of the practiced list if a specific list is being practiced 
- * (url form: https://www.vocabulary.com/lists/${id}/practice)
- * Otherwise returns false
- */
-function getListId() {
-    let match = /\/lists\/(\d+)\/practice/.exec(document.location.pathname);
-    if (match) {
-        return match[1];
-    } else {
-        return false;
-    }
-}
+windowExporter(initialize);
 
 function initialize() {
 
     // preload list examples once if available
-    const id = getListId();
+    const id = getListIdFromDocUrl();
     let list;
     if (id) {
         browser.runtime.sendMessage({
@@ -31,7 +18,7 @@ function initialize() {
         .catch(console.err);
     }
 
-    window.render('.questionPane > div:last-child .blurb-container', {observe: true, rootSelector: '.questionPane'}, (descriptionParent) => {
+    window.vocenhancer.render('.questionPane > div:last-child .blurb-container', {observe: true, rootSelector: '.questionPane'}, (descriptionParent) => {
 
         function getWord() {
             // get word
@@ -125,4 +112,4 @@ function initialize() {
         });
 }
 
-window.initialize = initialize;
+Object.assign(window.vocenhancer, {initialize});

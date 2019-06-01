@@ -1,6 +1,9 @@
-import { createTranslation } from './element-creator';
-// insert translation element
-vocclient.render('#pageContent', {observe: true, firstPass: true}, (pageContent) => {
+import { createTranslation, windowExporter } from './element-creator';
+windowExporter(initialize);
+
+function initialize() {
+    // insert translation element
+    const pageContent = document.querySelector('#pageContent');
     // get word
     let wordEl = document.querySelector('div[data-word]');
     if (wordEl) {
@@ -8,4 +11,4 @@ vocclient.render('#pageContent', {observe: true, firstPass: true}, (pageContent)
         let defContainer = pageContent.querySelector('.definitionsContainer');
         defContainer.insertBefore(createTranslation(word, 'dark'), defContainer.children[0]);
     }
-});
+}

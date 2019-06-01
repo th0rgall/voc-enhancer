@@ -48,6 +48,18 @@
     color: #333 !important;
 }
 
+/* uses this symbol font: https://symbolset.com/icons/standard */
+
+/* pronunciation audio button in list view */
+.learnable .ve-audio {
+    position: relative;
+    left: -10px;
+    top: -23px;
+    padding-left: 0.19rem;
+    font-size: 1rem;
+   
+}
+
 /* voc.com css override */
 .wordlist.notesView a.word {
     margin-right: 10px;
