@@ -42,16 +42,95 @@
     margin-bottom: 0;
 }
 
+/* collapse links */
+.ve-source-link-collapse {
+    overflow: hidden;
+    display: inline-block;
+    position: relative;
+    height: 40px;
+    /*  width should be determined by code 
+        it needs a concrete w/h for the overflow hidden to work
+        may be problematic on mobile (take this into account?)
+    */
+}
+
+/* 
+    hacky solution to not have an extra row on mobile 
+    so far no nice animation there
+*/
+@media screen and (max-width: 700px) {
+    .ve-source-link-collapse:not(.active) {
+        display: none;
+    }
+
+    .ve-source-link-collapse.active {
+        bottom: 0;
+    }
+}
+
+.ve-source-link-collapse .ve-links {
+    /* position: relative; */
+    position: absolute;
+    /* top: 26px; */
+    /* initial don't-see-me setting */
+    transform: translateX(-700px);
+    transition: transform 1s;
+}
+
+.ve-source-link-collapse.active .ve-links {
+    transition: transform 1s;
+    /* transform: translateX(0px); */
+}
+
+/* collapse button
+.ve-source-link-collapse-button-wrapper {
+    position: relative;
+    display: inline-block;
+} */
+
+/* uses this symbol font: https://symbolset.com/icons/standard */
+.ve-vocab-symbol {
+    font-family: "SSStandard";
+}
+
+.ve-source-link-collapse-button {
+	text-decoration: none !important;
+	color: #999;
+	white-space: nowrap;
+	display: inline-block;
+	font-size: 13px;
+	margin: 0 0 0 .3em;
+	cursor: pointer;
+	transition: all .3s;
+	position: relative;
+	bottom: 11px;
+	margin-right: 15px;
+}
+
+.ve-source-link-collapse-link {
+    margin-right: 0.2em;
+    font-size: 16px;
+    cursor: default;
+}
+
+.ve-source-link-collapse-button.active {
+    transform: rotate(-180deg);
+}
+
+.ve-source-link-collapse .ve-links.active {
+    transition: transform 1s;
+
+}
+
 .ve-source-link {
     pointer-events: none;
     cursor: default;
     color: #333 !important;
 }
 
-/* uses this symbol font: https://symbolset.com/icons/standard */
 
 /* pronunciation audio button in list view */
-.learnable .ve-audio {
+.entry .ve-audio {
     position: relative;
     left: -10px;
     top: -23px;
@@ -79,6 +158,12 @@
     transition: all .3s;
     transition-delay: .07s;
     filter: grayscale(0);
+    opacity: 1;
+}
+
+/* disable grayscale for collapse */
+.ve-source-link-collapse .ve-links img {
+    filter: none;
     opacity: 1;
 }
 
