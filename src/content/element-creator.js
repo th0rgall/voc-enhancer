@@ -1,6 +1,7 @@
 import externalLinks from "../shared/externalLinks.js";
 import {langs} from "../api/languages.js";
 import translate from "../api/translate.js";
+import browser from 'webextension-polyfill';
 import Db from "../api/store";
 const db = new Db();
 
@@ -134,7 +135,7 @@ function createTranslation(word, color) {
     return translationEl;
 }
 
-async function createLinks(word) {
+async function createLinks(word, showEdit = false) {
     const container = document.createElement('span');
     container.classList.add('ve-links');
     const links = await db.get("externalLinks");
@@ -157,6 +158,22 @@ async function createLinks(word) {
             ref.appendChild(icon);
 
         });
+
+        if (showEdit) {
+            const ref = document.createElement('a');
+            ref.addEventListener("click", () => {
+                browser.runtime.sendMessage({
+                    type: 'openOptions'
+                }).then().catch(() => alert(`Could not open the options page to edit your source links!
+                Try navigating to the options via the web browser settings, or contact the developer for help.`));
+            });
+
+            ref.classList.add('ve-external-link', 've-vocab-symbol', 've-external-link--options');
+            ref.textContent = "⚙️"
+            ref.setAttribute("title", "Choose source links");
+            container.appendChild(ref);
+        }
+
         return container;
 }
 

@@ -1,15 +1,16 @@
 import Db from './api/store';
 import translate from './api/translate.js'
 import VocAPI from '../node_modules/voc-api';
+import browser from 'webextension-polyfill';
 // var because of //https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/runtime/getBackgroundPage
 var db = new Db(); 
+// todo, via .vocenhancer?
 window.db = db; // make it accessible by other priviledged extension pages
 
 db.loadAll()
 // TODO: remove later!
-db.resetAllSettings();
-db.get("externalLinks").then(console.log);
-db.get("externalLinks").then(console.log);
+// db.resetAllSettings();
+// db.get("externalLinks").then(console.log);
 
 // set up VocAPI
 const vocapi = new VocAPI();
@@ -75,19 +76,25 @@ chrome.runtime.onMessage.addListener(
   (msg, sender, sendResponse) => {
     let type = msg.type;
     let selection = msg.selection;
-    if (type === 'checkLogin') {
-      checkLogin();
-    } else if (type === 'selection') {
-      checkSelection(selection);
-    } else if (type === 'translation') {
-      translate.apply(null, msg.args).then(sendResponse).catch(err => {
-          console.error(err);
-      });
-      return true;
-    } else if (type === 'getList') {
-      // NOTE: The argument for sendResponse should be any JSON-ifiable object.
-      vocapi.getList(msg.id).then(sendResponse).catch(console.err);
-      return true; // NOTE: necessary to signal asynchronous behavior of sendResponse
+    switch (type) {
+      case "checkLogin":
+          checkLogin();
+          break;
+      case "selection":
+          checkSelection(selection);
+          break;
+      case "translation": 
+          translate.apply(null, msg.args).then(sendResponse).catch(err => {
+            console.error(err);
+          });
+          return true;
+      case "getList": 
+          // NOTE: The argument for sendResponse should be any JSON-ifiable object.
+          vocapi.getList(msg.id).then(sendResponse).catch(console.err);
+          return true; // NOTE: necessary to signal asynchronous behavior of sendResponse
+      case "openOptions":
+          browser.runtime.openOptionsPage().then(sendResponse).catch(console.log);
+          return true;
     }
   });
 
