@@ -169,8 +169,12 @@ async function createLinks(word, showEdit = false) {
             });
 
             ref.classList.add('ve-external-link', 've-vocab-symbol', 've-external-link--options');
-            ref.textContent = "⚙️"
+            ref.textContent = "⚙️";
             ref.setAttribute("title", "Choose source links");
+
+            const sep = document.createElement('span');
+            sep.classList.add('ve-external-link-seperator');
+            container.appendChild(sep);
             container.appendChild(ref);
         }
 

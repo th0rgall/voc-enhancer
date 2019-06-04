@@ -28,18 +28,27 @@
 
 .ve-external-link {
     display: inline-block;
-    width: 24px;
-    height: 24px;
-    margin: 12px;
+    width: 48px;
+    height: 48px;
+    padding: 12px;
+    
 }
 
 .ve-external-link:first-child {
-    margin-left: 0;
+    padding-left: 0;
+    width: 36px;
 }
 
 /* in word list page */
 .entry .ve-external-link {
-    margin-bottom: 0;
+    padding-bottom: 0;
+    height: 36px;
+    transition: transform .2s;
+}
+
+.entry .ve-external-link:hover {
+    transform: scale(1.25);
+    transition: transform 0.25s;
 }
 
 /* collapse links */
@@ -122,15 +131,11 @@
     cursor: pointer;
 }
 
-.ve-external-link.ve-vocab-symbol.ve-external-link--options::before {
-	display: inline-block;
-	width: 2px;
-	height: 1em;
-	content: "";
-	background: #999;
-	position: absolute;
-	bottom: 4px;
-	left: -12px;
+.ve-external-link-seperator {
+    display: inline-block;
+    width: 2px;
+    height: 1.5rem;
+    background: #aaa;
 }
 
 /* version with collapse button under audio */
