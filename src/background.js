@@ -178,7 +178,7 @@ function parseVoclist(inputStr, synchronous) {
         if (words.length === 1) {
           sendToActiveTab({type: 'sentence'}, (sentenceObj) => {
             if (sentenceObj) {
-              words[0].sentence = sentenceObj.sentence;
+              words[0].example = sentenceObj.sentence;
               words[0].location = sentenceObj.location;
               words[0].title = sentenceObj.title;
             }
