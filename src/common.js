@@ -1,5 +1,8 @@
 import { windowExporter } from './content/element-creator';
-windowExporter(render, renderTo, getListIdFromDocUrl);
+windowExporter(
+    {key: "render", value: render},
+    {key: "renderTo", value: renderTo},
+    {key: "getListIdFromDocUrl", value: getListIdFromDocUrl});
 
 if (document.readyState === "complete" ) {
     window.vocenhancer.initialize();

@@ -1,5 +1,5 @@
 import { createTranslation, windowExporter } from './element-creator';
-windowExporter(initialize);
+windowExporter({key: "initialize", value: initialize});
 
 function initialize() {
     // insert translation element

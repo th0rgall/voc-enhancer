@@ -196,8 +196,11 @@ function createAudioButton(audioCode) {
 }
 
 function windowExporter(...args) {
+    console.log(args);
     // assumed args are function to be put in te window.vocenhancer
-    const fObject = args.reduce((acc, f) => ({...acc, [f.name]: f}), {});
+    // problem: in production these function names are optimized out -> can't use f.name
+    // const fObject = args.reduce((acc, f) => ({...acc, [f.name]: f}), {});
+    const fObject = args.reduce((acc, fWrapper) => ({...acc, [fWrapper.key]: fWrapper.value}), {});
     if (window.vocenhancer) {
         Object.assign(window.vocenhancer, fObject);
     } else {

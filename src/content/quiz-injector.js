@@ -1,7 +1,7 @@
 
 import { createTranslation, createLinks, windowExporter } from './element-creator';
 import browser from 'webextension-polyfill';
-windowExporter(initialize);
+windowExporter({key: "initialize", value: initialize });
 
 function initialize() {
 
