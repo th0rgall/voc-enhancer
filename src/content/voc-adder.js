@@ -119,3 +119,51 @@ document.addEventListener('selectionchange', () => {
         });
     }
 })
+
+/* Mobile adding of selected words */
+// set-up
+const mobileAdd = document.createElement("div");
+mobileAdd.classList.add("ve-mobile-add");
+const mobileAddBtn = document.createElement("button");
+mobileAddBtn.appendChild(document.createTextNode("Add word"));
+
+const selectEl = document.createElement('select');
+selectEl.setAttribute('name', 'list-selector');
+selectEl.classList.add('list-selector');
+
+const icon = document.createElement('img');
+icon.classList.add("ve-mobile-add__icon");
+icon.src = chrome.runtime.getURL('icons/favicon-64x64.png');
+mobileAdd.insertAdjacentElement('afterbegin', icon);
+
+  // insert options
+[{title: "List one", id: 1 }, {title: "De goden van Asgard", id: 2}, { title: "Mijn boek", id: 3}]
+.forEach(wordList => {
+  const optionEl = document.createElement('option');
+  optionEl.setAttribute('value', wordList.id);
+  const optionText = document.createTextNode(wordList.title);
+  optionEl.appendChild(optionText);
+  selectEl.appendChild(optionEl);
+});
+
+selectEl.addEventListener('change', (e) => {
+    console.log(e.target.value);
+});
+
+const right = document.createElement("div");
+right.classList.add("ve-mobile-add__right")
+right.appendChild(selectEl);
+right.appendChild(mobileAddBtn);
+mobileAdd.insertAdjacentElement('beforeend', right);
+
+
+// behavior
+
+// send {
+//   type: "addText",
+//   selection: 
+//   wordListId: 
+// }
+
+// insertion
+document.body.insertAdjacentElement('beforeend', mobileAdd);

@@ -207,33 +207,37 @@ function checkSelection(selection) {
   }
 }
 
+function addToList(selectionText, wordListId) {
+  parseVoclist(selectionText).then((words) => {
+    vocapi.addToList(words, wordListId)
+    .then( (result) => {
+      // send notification
+      const firstWord = result.corrected ? result.corrected : result.original;
+      const notificationId = `add-${firstWord}-to-${wordListId}`;
+      if (words.length > 1) {
+        createNotification(notificationId,
+          `${words.length} words added`,
+          `${words.length} words were added to ${vocapi.getListNameSync(wordListId)}.\nClick to open in voc.com.`,
+          () => {
+            chrome.tabs.create({url: `https://www.vocabulary.com/lists/${wordListId}`});
+          });
+      } else {
+        createNotification(notificationId,
+          `'${firstWord}' added`,
+          `'${firstWord}' was added to ${vocapi.getListNameSync(wordListId)}.\nClick to open in voc.com.`,
+          () => {
+            chrome.tabs.create({url: `https://www.vocabulary.com/dictionary/${firstWord}`});
+          }); 
+        }
+    })
+    .catch(logError);
+  });
+}
+
 // returns an onlick function for the Add To... context menu
 function addToF(wordListId) {
   return (info, tab) => {
-    parseVoclist(info.selectionText).then((words) => {
-      vocapi.addToList(words, wordListId)
-      .then( (result) => {
-        // send notification
-        const firstWord = result.corrected ? result.corrected : result.original;
-        const notificationId = `add-${firstWord}-to-${wordListId}`;
-        if (words.length > 1) {
-          createNotification(notificationId,
-            `${words.length} words added`,
-            `${words.length} words were added to ${vocapi.getListNameSync(wordListId)}.\nClick to open in voc.com.`,
-            () => {
-              chrome.tabs.create({url: `https://www.vocabulary.com/lists/${wordListId}`});
-            });
-        } else {
-          createNotification(notificationId,
-            `'${firstWord}' added`,
-            `'${firstWord}' was added to ${vocapi.getListNameSync(wordListId)}.\nClick to open in voc.com.`,
-            () => {
-              chrome.tabs.create({url: `https://www.vocabulary.com/dictionary/${firstWord}`});
-            }); 
-          }
-      })
-      .catch(logError);
-    });
+    addToList(info.selectionText);
   }
 }
 
