@@ -120,55 +120,87 @@ document.addEventListener('selectionchange', () => {
     }
 })
 
-/* Mobile adding of selected words */
-// set-up
-const mobileAdd = document.createElement("div");
-mobileAdd.classList.add("ve-mobile-add");
-const mobileAddBtn = document.createElement("button");
-mobileAddBtn.appendChild(document.createTextNode("Add word"));
+var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+if (isMobile) {
+  insertMobileAdd();
+}
 
-const selectEl = document.createElement('select');
-selectEl.setAttribute('name', 'list-selector');
-selectEl.classList.add('list-selector');
+/** 
+ * inserts a popup at the bottom of the screen
+ */
+function insertMobileAdd() {
+  /* Mobile adding of selected words */
+  // set-up
+  const mobileAdd = document.createElement("div");
+  mobileAdd.classList.add("ve-mobile-add");
+  const mobileAddBtn = document.createElement("button");
+  mobileAddBtn.appendChild(document.createTextNode("Add word"));
 
-const icon = document.createElement('img');
-icon.classList.add("ve-mobile-add__icon");
-icon.src = chrome.runtime.getURL('icons/favicon-64x64.png');
-mobileAdd.insertAdjacentElement('afterbegin', icon);
+  const selectEl = document.createElement('select');
+  selectEl.setAttribute('name', 'list-selector');
+  selectEl.classList.add('list-selector');
 
-// insert select options 
-chrome.runtime.sendMessage({
-  type: 'getLists'
-}, res => {
-  res.forEach(wordList => {
-    const optionEl = document.createElement('option');
-    optionEl.setAttribute('value', wordList.wordlistid);
-    const optionText = document.createTextNode(wordList.name);
-    optionEl.appendChild(optionText);
-    selectEl.appendChild(optionEl);
-  });
-});
+  const icon = document.createElement('img');
+  icon.classList.add("ve-mobile-add__icon");
+  icon.src = chrome.runtime.getURL('icons/favicon-64x64.png');
+  mobileAdd.insertAdjacentElement('afterbegin', icon);
 
-// add button click handler
-mobileAddBtn.addEventListener('click', () => {
+  function toggleMobileAdd() {
+    mobileAdd.classList.toggle('ve-mobile-add--visible');
+  }
+
+  function mobileAddIsOpen() {
+    return mobileAdd.classList.contains('ve-mobile-add--visible');
+  }
+
+  // insert select options 
   chrome.runtime.sendMessage({
-    type: 'addText',
-    selection: getSelectedText(),
-    wordListId: selectEl.value
+    type: 'getLists'
+  }, res => {
+    res.forEach(wordList => {
+      const optionEl = document.createElement('option');
+      optionEl.setAttribute('value', wordList.wordlistid);
+      const optionText = document.createTextNode(wordList.name);
+      optionEl.appendChild(optionText);
+      selectEl.appendChild(optionEl);
+    });
   });
 
-  // TODO: remove popup
-})
+  // add button click handler
+  mobileAddBtn.addEventListener('click', () => {
+    chrome.runtime.sendMessage({
+      type: 'addText',
+      selection: getSelectedText(),
+      wordListId: selectEl.value
+    });
 
-selectEl.addEventListener('change', (e) => {
-    console.log(e.target.value);
-});
+    // TODO: remove popup
+  })
 
-const right = document.createElement("div");
-right.classList.add("ve-mobile-add__right")
-right.appendChild(selectEl);
-right.appendChild(mobileAddBtn);
-mobileAdd.insertAdjacentElement('beforeend', right);
+  document.addEventListener('selectionchange', () => {
+    // TODO: this check every time. Is that necessary?
+    chrome.runtime.sendMessage({
+        type: 'checkLogin'
+    });
+    const text = getSelectedText();
+    // open mobile add
+    if (text && !mobileAddIsOpen()) {
+        toggleMobileAdd();
+    } else { // deselected
+      toggleMobileAdd();
+    }
+  });
 
-// insertion
-document.body.insertAdjacentElement('beforeend', mobileAdd);
+  selectEl.addEventListener('change', (e) => {
+      console.log(e.target.value);
+  });
+
+  const right = document.createElement("div");
+  right.classList.add("ve-mobile-add__right")
+  right.appendChild(selectEl);
+  right.appendChild(mobileAddBtn);
+  mobileAdd.insertAdjacentElement('beforeend', right);
+
+  // insertion
+  document.body.insertAdjacentElement('beforeend', mobileAdd);
+}

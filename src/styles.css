@@ -280,13 +280,29 @@
     position: fixed;
     bottom: 0;
     width: 100%;
-/*   height: 3rem; */
+    height: 60px;
     z-index: 2;
     font-size: 1rem;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-} 
+    align-items: center;
+    color: #000;
+
+    visibility: hidden;
+    transition: transform 0.5s ease-in;
+    transform: translateY(70px);
+    transition-property: transform, visibility;
+    transition-duration: 0.5s, 0s;
+    transition-delay: 0s, 0.5s; 
+    transition-timing-function: ease-in;
+}
+
+.ve-mobile-add.ve-mobile-add--visible {
+    visibility: visible;
+    transition: transform 0.5s ease-in;
+    transform: translateY(0);
+}
 
 .ve-mobile-add select {
     margin: 0 13px;
@@ -298,10 +314,10 @@
 }
 
 .ve-mobile-add button { 
-    font-size: 1rem;
-    margin: .5rem .5rem .5rem 0;
-    padding: 0 1rem;
-    line-height: 2.5rem;
+    font-size: inherit;
+    margin: .5em .5em .5em 0;
+    padding: 0 1em;
+    line-height: 2.5em;
     outline: none;
     border: none;
     border-radius: 3px;
