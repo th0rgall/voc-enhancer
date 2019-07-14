@@ -294,6 +294,7 @@
     border: 2px solid #C1C1C1;
     border-radius: 3px;
     box-sizing: border-box;
+    max-width: 40vw;
 }
 
 .ve-mobile-add button { 

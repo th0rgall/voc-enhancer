@@ -136,15 +136,24 @@ icon.classList.add("ve-mobile-add__icon");
 icon.src = chrome.runtime.getURL('icons/favicon-64x64.png');
 mobileAdd.insertAdjacentElement('afterbegin', icon);
 
+
+// add lists
+chrome.runtime.sendMessage({
+  type: 'getLists'
+}, res => {
+  res.forEach(wordList => {
+    const optionEl = document.createElement('option');
+    optionEl.setAttribute('value', wordList.wordlistid);
+    const optionText = document.createTextNode(wordList.name);
+    optionEl.appendChild(optionText);
+    selectEl.appendChild(optionEl);
+  });
+  
+});
+
   // insert options
 [{title: "List one", id: 1 }, {title: "De goden van Asgard", id: 2}, { title: "Mijn boek", id: 3}]
-.forEach(wordList => {
-  const optionEl = document.createElement('option');
-  optionEl.setAttribute('value', wordList.id);
-  const optionText = document.createTextNode(wordList.title);
-  optionEl.appendChild(optionText);
-  selectEl.appendChild(optionEl);
-});
+
 
 selectEl.addEventListener('change', (e) => {
     console.log(e.target.value);

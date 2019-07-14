@@ -92,6 +92,11 @@ chrome.runtime.onMessage.addListener(
           // NOTE: The argument for sendResponse should be any JSON-ifiable object.
           vocapi.getList(msg.id).then(sendResponse).catch(console.err);
           return true; // NOTE: necessary to signal asynchronous behavior of sendResponse
+      case "getLists":
+          vocapi.getLists().then(sendResponse).catch(console.err);
+          return true;
+      case "addText": 
+          addToList(msg.wordListId, )
       case "openOptions":
           browser.runtime.openOptionsPage().then(sendResponse).catch(console.log);
           return true;
