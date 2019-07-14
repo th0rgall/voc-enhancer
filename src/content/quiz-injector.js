@@ -71,7 +71,7 @@ function initialize() {
             quizInjection.appendChild(createTranslation(word));
 
             // inject links
-            createLinks(word).then(result => quizInjection.appendChild(result)).catch(console.log);
+            createLinks(word, false, "highlight light-all").then(result => quizInjection.appendChild(result)).catch(console.log);
             descriptionParent.children[0].insertBefore(
                 quizInjection, descriptionParent.querySelector('.more')); 
             

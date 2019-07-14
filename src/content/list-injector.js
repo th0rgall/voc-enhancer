@@ -16,7 +16,7 @@ function initialize() {
     // insert external service links
     forEachLi((current, word) => {
         // does a lot of things repetitively: cache insite this method
-        createLinks(word, true).then(result => {
+        createLinks(word, true, "").then(result => {
             // create a collapse container
             const collapseContainer = document.createElement("div");
             collapseContainer.classList.add("ve-source-link-collapse");

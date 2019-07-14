@@ -135,9 +135,18 @@ function createTranslation(word, color) {
     return translationEl;
 }
 
-async function createLinks(word, showEdit = false) {
+/**
+ * 
+ * @param {*} word 
+ * @param {*} showEdit 
+ * @param {*} modifiers space delimited list of css modifiers to add
+ *                      grow, light-all, highlight
+ */
+async function createLinks(word, showEdit = false, modifiers = "") {
+    modifiers = modifiers.split(" ").map(s => s.trim());
     const container = document.createElement('span');
     container.classList.add('ve-links');
+    modifiers.forEach(mod => container.classList.add("ve-links--" + mod));
     const links = await db.get("externalLinks");
 
     Object.keys(externalLinks)
