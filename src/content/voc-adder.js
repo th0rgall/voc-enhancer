@@ -136,8 +136,7 @@ icon.classList.add("ve-mobile-add__icon");
 icon.src = chrome.runtime.getURL('icons/favicon-64x64.png');
 mobileAdd.insertAdjacentElement('afterbegin', icon);
 
-
-// add lists
+// insert select options 
 chrome.runtime.sendMessage({
   type: 'getLists'
 }, res => {
@@ -148,12 +147,18 @@ chrome.runtime.sendMessage({
     optionEl.appendChild(optionText);
     selectEl.appendChild(optionEl);
   });
-  
 });
 
-  // insert options
-[{title: "List one", id: 1 }, {title: "De goden van Asgard", id: 2}, { title: "Mijn boek", id: 3}]
+// add button click handler
+mobileAddBtn.addEventListener('click', () => {
+  chrome.runtime.sendMessage({
+    type: 'addText',
+    selection: getSelectedText(),
+    wordListId: selectEl.value
+  });
 
+  // TODO: remove popup
+})
 
 selectEl.addEventListener('change', (e) => {
     console.log(e.target.value);
@@ -164,15 +169,6 @@ right.classList.add("ve-mobile-add__right")
 right.appendChild(selectEl);
 right.appendChild(mobileAddBtn);
 mobileAdd.insertAdjacentElement('beforeend', right);
-
-
-// behavior
-
-// send {
-//   type: "addText",
-//   selection: 
-//   wordListId: 
-// }
 
 // insertion
 document.body.insertAdjacentElement('beforeend', mobileAdd);

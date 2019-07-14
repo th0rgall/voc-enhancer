@@ -96,7 +96,8 @@ chrome.runtime.onMessage.addListener(
           vocapi.getLists().then(sendResponse).catch(console.err);
           return true;
       case "addText": 
-          addToList(msg.wordListId, )
+          addToList(msg.selection, msg.wordListId);
+          break;
       case "openOptions":
           browser.runtime.openOptionsPage().then(sendResponse).catch(console.log);
           return true;
