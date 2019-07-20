@@ -6,7 +6,9 @@ const DEFAULT_SETTINGS = {
     // order is important
     externalLinks: ["google_images", "giphy_images", "youglish", "thesaurus_com", "urban_dictionary", "google_define"],
     showTranslations: true,
-    showMobileAdd: true
+    showMobileAdd: true,
+    showExternalLinks: true,
+    showMyLists: true
 };
 
 export default class Db {

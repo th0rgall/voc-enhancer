@@ -218,6 +218,7 @@ function createMobileAdd() {
     .addEventListener('click', () => {
       toggleMobileAdd(mobileAdd);
       // persist the never setting
+      showMobileAdd = false; // in current session
       browser.runtime.sendMessage({
         type: 'setDb',
         key: 'showMobileAdd',
@@ -243,14 +244,13 @@ function insertMobileAdd() {
     // });
     let text = getSelectedText();
     text = text && text.trim().slice(0,100);
-    // open mobile add
-    if (text && !mobileAddIsOpen(mobileAdd)) {
+    // open mobile add. showMobileAdd => check whether not disabled before
+    if (text && !mobileAddIsOpen(mobileAdd) && showMobileAdd) {
         mobileAdd.querySelector('.ve-mobile-add__selection').innerText = text;
         toggleMobileAdd(mobileAdd);
         mobileAdd.dataset.isOpening = true;
         const transitionListener = (e) => {
           if (e.propertyName == "transform") {
-            console.log("transitionend!");
             mobileAdd.dataset.isOpening = false;
             mobileAdd.removeEventListener('transitionend', transitionListener);
           };
@@ -264,8 +264,6 @@ function insertMobileAdd() {
 
   // toggle when clicked outside of the popup (~ not now)
   document.body.addEventListener('mousedown', (e) => {
-    console.log("contains", mobileAdd.contains(e.target));
-    console.log("open", mobileAddIsOpen(mobileAdd));
     if (!mobileAdd.contains(e.target) 
         && mobileAddIsOpen(mobileAdd)
         && !(mobileAdd.dataset.isOpening == true)) {
