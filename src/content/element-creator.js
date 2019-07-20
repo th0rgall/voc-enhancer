@@ -2,6 +2,8 @@ import externalLinks from "../shared/externalLinks.js";
 import {langs} from "../api/languages.js";
 import translate from "../api/translate.js";
 import browser from 'webextension-polyfill';
+import Db from "../api/store";
+const db = new Db();
 
 /**
  * Creates a translation DOM element.
@@ -47,10 +49,10 @@ function createTranslation(word, color) {
         // Jan 17, 19:TODO: fix pos by using api, progress no longer in page
         if (domPos && domPos.dataset.progress) pos = JSON.parse(domPos.dataset.progress)[0].pos;
 
-        chrome.runtime.sendMessage({
+        browser.runtime.sendMessage({
             type: 'translation',
             args: [word, {from: 'en', to: target, pos: pos}]
-        }, (res) => {
+        }).then(res => {
 
             const tDispFun = (t) => {
                 if (t.pos) {
@@ -164,7 +166,7 @@ async function createLinks(word, showEdit = false, modifiers = "") {
             container.appendChild(ref);
 
             const icon = document.createElement('img');
-            icon.src = chrome.runtime.getURL(link.icon);
+            icon.src = browser.runtime.getURL(link.icon);
             ref.appendChild(icon);
 
         });

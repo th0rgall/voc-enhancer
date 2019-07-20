@@ -64,7 +64,7 @@ function checkLogin() {
         contextMenus.login = createContextMenu({id: "login", title: "Log in to voc.com to save words", onclick: () => {
           chrome.tabs.create({url: 'https://www.vocabulary.com/login'});
         }}, () => {
-          console.log(chrome.runtime.lastError);
+          console.log(browser.runtime.lastError);
         });
         logError(err);
     });

@@ -1,3 +1,5 @@
+const browser = require('webextension-polyfill');
+
 function getSelectedText() {
     let selection = null;
     if (window.getSelection) {
@@ -11,14 +13,14 @@ function getSelectedText() {
 }
 
 // incoming connection
-chrome.runtime.onMessage.addListener(
-  function(request, sender, sendResponse) {
+browser.runtime.onMessage.addListener(
+  function(request, sender) {
     if (!sender.tab) { // message from extension
       if (request.type === 'addtoNew') {
         let name = getName();
-        if (name) sendResponse({type: 'addtoNew', name: name});
+        if (name) return Promise.resolve({type: 'addtoNew', name: name});
       } else if (request.type === 'sentence') {
-          sendResponse({
+          return Promise.resolve({
             type: 'sentence', 
             sentence: getSurroundingSentence(), 
             location: window.location.href,
@@ -43,7 +45,7 @@ function getName() {
 
 // on page init: always check for login state
 document.addEventListener('load', () => {
-    chrome.runtime.sendMessage({
+    browser.runtime.sendMessage({
         type: 'checkLogin'
     });
 })
@@ -105,7 +107,7 @@ function getSurroundingSentence() {
 
 document.addEventListener('selectionchange', () => {
     // TODO: this check every time. Is that necessary?
-    chrome.runtime.sendMessage({
+    browser.runtime.sendMessage({
         type: 'checkLogin'
     });
     const text = getSelectedText();
@@ -113,50 +115,81 @@ document.addEventListener('selectionchange', () => {
         // TODO: this is initiated for every selection now.
         // Is there no context-menu event in the background that spawns when context menu's can still be modified?
         // Then it could be requested.
-        chrome.runtime.sendMessage({
+        browser.runtime.sendMessage({
             type: 'selection',
             selection: text,
         });
     }
 })
 
+/* MOBILE WORD ADD INSERT */
+
+// only add when 
+// 1. on mobile
+// 2. user wants to see the popup ("Never" was not tapped)
 var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+var showMobileAdd = true;
 if (isMobile) {
-  insertMobileAdd();
+  browser.runtime.sendMessage({
+    type: 'getDb',
+    key: 'showMobileAdd',
+    default: showMobileAdd
+  }).then( val => {
+    showMobileAdd = val;
+    if (showMobileAdd) insertMobileAdd();
+  });
+};
+
+function toggleMobileAdd(mobileAdd) {
+  mobileAdd.classList.toggle('ve-mobile-add--visible');
 }
 
-/** 
- * inserts a popup at the bottom of the screen
- */
-function insertMobileAdd() {
-  /* Mobile adding of selected words */
-  // set-up
+function mobileAddIsOpen(mobileAdd) {
+  return mobileAdd.classList.contains('ve-mobile-add--visible');
+}
+
+function createMobileAdd() {
+  /* ----  set-up ---- */
   const mobileAdd = document.createElement("div");
   mobileAdd.classList.add("ve-mobile-add");
+  mobileAdd.dataset.isOpening = false;
+  // bottom container
+  const bot = document.createElement('div');
+  bot.classList.add('ve-mobile-add__bottom');
+  mobileAdd.insertAdjacentElement('beforeend', bot);
+  // left icon
+  const icon = document.createElement('img');
+  icon.classList.add("ve-mobile-add__icon");
+  icon.src = browser.runtime.getURL('icons/favicon-64x64.png');
+  bot.insertAdjacentElement('afterbegin', icon);
+  // button
   const mobileAddBtn = document.createElement("button");
   mobileAddBtn.appendChild(document.createTextNode("Add word"));
-
+  // select el
   const selectEl = document.createElement('select');
   selectEl.setAttribute('name', 'list-selector');
   selectEl.classList.add('list-selector');
+  // right container
+  const right = document.createElement("div");
+  right.classList.add("ve-mobile-add__right")
+  right.appendChild(selectEl);
+  right.appendChild(mobileAddBtn);
+  bot.insertAdjacentElement('beforeend', right);
 
-  const icon = document.createElement('img');
-  icon.classList.add("ve-mobile-add__icon");
-  icon.src = chrome.runtime.getURL('icons/favicon-64x64.png');
-  mobileAdd.insertAdjacentElement('afterbegin', icon);
+  const topHTML = `
+    <div class="ve-mobile-add__label">Vocabulary.com Enhancer</div>
+    <div class="ve-mobile-add__top">
+      <span class="ve-mobile-add__infotext">Add "<span class="ve-mobile-add__selection"></span>" to a list?</span>
+      <span class="ve-mobile-add__deny"><div></div><span class="ve-mobile-add__not-now">Not now</span><span class="ve-mobile-add__never">Never</span></span>
+    </div>
+    `;
+  mobileAdd.insertAdjacentHTML('afterbegin', topHTML);
 
-  function toggleMobileAdd() {
-    mobileAdd.classList.toggle('ve-mobile-add--visible');
-  }
-
-  function mobileAddIsOpen() {
-    return mobileAdd.classList.contains('ve-mobile-add--visible');
-  }
-
+  /* ----  attach behavior ---- */
   // insert select options 
-  chrome.runtime.sendMessage({
+  browser.runtime.sendMessage({
     type: 'getLists'
-  }, res => {
+  }).then(res => {
     res.forEach(wordList => {
       const optionEl = document.createElement('option');
       optionEl.setAttribute('value', wordList.wordlistid);
@@ -168,38 +201,77 @@ function insertMobileAdd() {
 
   // add button click handler
   mobileAddBtn.addEventListener('click', () => {
-    chrome.runtime.sendMessage({
+    browser.runtime.sendMessage({
       type: 'addText',
       selection: getSelectedText(),
       wordListId: selectEl.value
     });
-
     // TODO: remove popup
-  })
+  });
+
+  // not now 
+  mobileAdd.querySelector('.ve-mobile-add__not-now')
+    .addEventListener('click', () => toggleMobileAdd(mobileAdd));
+
+  // never
+  mobileAdd.querySelector('.ve-mobile-add__never')
+    .addEventListener('click', () => {
+      toggleMobileAdd(mobileAdd);
+      // persist the never setting
+      browser.runtime.sendMessage({
+        type: 'setDb',
+        key: 'showMobileAdd',
+        value: false
+      }).then(
+        // todo: send notification / confirmation?
+      );
+    });
+  return mobileAdd;
+}
+
+/** 
+ * inserts a popup at the bottom of the screen
+ */
+function insertMobileAdd() {
+  /* Mobile adding of selected words */
+  const mobileAdd = createMobileAdd();
 
   document.addEventListener('selectionchange', () => {
-    // TODO: this check every time. Is that necessary?
-    chrome.runtime.sendMessage({
-        type: 'checkLogin'
-    });
-    const text = getSelectedText();
+    // // TODO: this check every time. Is that necessary?
+    // browser.runtime.sendMessage({
+    //     type: 'checkLogin'
+    // });
+    let text = getSelectedText();
+    text = text && text.trim().slice(0,100);
     // open mobile add
-    if (text && !mobileAddIsOpen()) {
-        toggleMobileAdd();
-    } else { // deselected
-      toggleMobileAdd();
+    if (text && !mobileAddIsOpen(mobileAdd)) {
+        mobileAdd.querySelector('.ve-mobile-add__selection').innerText = text;
+        toggleMobileAdd(mobileAdd);
+        mobileAdd.dataset.isOpening = true;
+        const transitionListener = (e) => {
+          if (e.propertyName == "transform") {
+            console.log("transitionend!");
+            mobileAdd.dataset.isOpening = false;
+            mobileAdd.removeEventListener('transitionend', transitionListener);
+          };
+        }
+        mobileAdd.addEventListener('transitionend', transitionListener);
+    } else if (text && mobileAddIsOpen(mobileAdd)) {
+      // update selection
+      mobileAdd.querySelector('.ve-mobile-add__selection').innerText = text;
     }
   });
 
-  selectEl.addEventListener('change', (e) => {
-      console.log(e.target.value);
-  });
-
-  const right = document.createElement("div");
-  right.classList.add("ve-mobile-add__right")
-  right.appendChild(selectEl);
-  right.appendChild(mobileAddBtn);
-  mobileAdd.insertAdjacentElement('beforeend', right);
+  // toggle when clicked outside of the popup (~ not now)
+  document.body.addEventListener('mousedown', (e) => {
+    console.log("contains", mobileAdd.contains(e.target));
+    console.log("open", mobileAddIsOpen(mobileAdd));
+    if (!mobileAdd.contains(e.target) 
+        && mobileAddIsOpen(mobileAdd)
+        && !(mobileAdd.dataset.isOpening == true)) {
+      toggleMobileAdd(mobileAdd)
+    }
+  })
 
   // insertion
   document.body.insertAdjacentElement('beforeend', mobileAdd);
