@@ -2,8 +2,6 @@ import externalLinks from "../shared/externalLinks.js";
 import {langs} from "../api/languages.js";
 import translate from "../api/translate.js";
 import browser from 'webextension-polyfill';
-import Db from "../api/store";
-const db = new Db();
 
 /**
  * Creates a translation DOM element.
@@ -147,7 +145,10 @@ async function createLinks(word, showEdit = false, modifiers = "") {
     const container = document.createElement('span');
     container.classList.add('ve-links');
     modifiers.forEach(mod => container.classList.add("ve-links--" + mod));
-    const links = await db.get("externalLinks");
+    const links = await browser.runtime.sendMessage({
+            type: "getDb",
+            key: "externalLinks",
+        });
 
     Object.keys(externalLinks)
         .filter(k => 

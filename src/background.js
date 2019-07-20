@@ -101,6 +101,12 @@ chrome.runtime.onMessage.addListener(
       case "openOptions":
           browser.runtime.openOptionsPage().then(sendResponse).catch(console.log);
           return true;
+      case "getDb":
+          db.get(msg.key, msg.default || undefined).then(sendResponse, console.err);
+          return true;
+      case "setDb": 
+          db.set(msg.key, msg.value).then(sendResponse, console.err);
+          return true;
     }
   });
 
