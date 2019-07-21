@@ -4,8 +4,13 @@ import externalLinks from "../shared/externalLinks";
 
 const DEFAULT_SETTINGS = {
     // order is important
-    externalLinks: ["duckduckgo_images", "giphy_images", "youglish", "thesaurus_com", "urban_dictionary", "google_define"],
-    showTranslations: true
+    externalLinks: ["google_images", "giphy_images", "youglish", "thesaurus_com", "urban_dictionary", "google_define"],
+    showTranslations: true,
+    showMobileAdd: true,
+    showExternalLinks: true,
+    showMyLists: true,
+    showAudio: true,
+    showExamples: true
 };
 
 export default class Db {

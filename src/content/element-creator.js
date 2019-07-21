@@ -49,10 +49,10 @@ function createTranslation(word, color) {
         // Jan 17, 19:TODO: fix pos by using api, progress no longer in page
         if (domPos && domPos.dataset.progress) pos = JSON.parse(domPos.dataset.progress)[0].pos;
 
-        chrome.runtime.sendMessage({
+        browser.runtime.sendMessage({
             type: 'translation',
             args: [word, {from: 'en', to: target, pos: pos}]
-        }, (res) => {
+        }).then(res => {
 
             const tDispFun = (t) => {
                 if (t.pos) {
@@ -147,7 +147,10 @@ async function createLinks(word, showEdit = false, modifiers = "") {
     const container = document.createElement('span');
     container.classList.add('ve-links');
     modifiers.forEach(mod => container.classList.add("ve-links--" + mod));
-    const links = await db.get("externalLinks");
+    const links = await browser.runtime.sendMessage({
+            type: "getDb",
+            key: "externalLinks",
+        });
 
     Object.keys(externalLinks)
         .filter(k => 
@@ -163,7 +166,7 @@ async function createLinks(word, showEdit = false, modifiers = "") {
             container.appendChild(ref);
 
             const icon = document.createElement('img');
-            icon.src = chrome.runtime.getURL(link.icon);
+            icon.src = browser.runtime.getURL(link.icon);
             ref.appendChild(icon);
 
         });

@@ -1,3 +1,5 @@
+const browser = require('webextension-polyfill');
+
 function getSelectedText() {
     let selection = null;
     if (window.getSelection) {
@@ -11,16 +13,16 @@ function getSelectedText() {
 }
 
 // incoming connection
-chrome.runtime.onMessage.addListener(
-  function(request, sender, sendResponse) {
+browser.runtime.onMessage.addListener(
+  function(request, sender) {
     if (!sender.tab) { // message from extension
       if (request.type === 'addtoNew') {
         let name = getName();
-        if (name) sendResponse({type: 'addtoNew', name: name});
+        if (name) return Promise.resolve({type: 'addtoNew', name: name});
       } else if (request.type === 'sentence') {
-          sendResponse({
+          return Promise.resolve({
             type: 'sentence', 
-            sentence: getSurroundingSentence(), 
+            sentence: getSurroundingSentence(),
             location: window.location.href,
             title: document.title ? document.title : undefined
           });
@@ -43,7 +45,7 @@ function getName() {
 
 // on page init: always check for login state
 document.addEventListener('load', () => {
-    chrome.runtime.sendMessage({
+    browser.runtime.sendMessage({
         type: 'checkLogin'
     });
 })
@@ -59,17 +61,21 @@ function getSurroundingSentence() {
       const escapeRegExp = function(str) {
         return str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
       }
+      
       const regWord = escapeRegExp(word);
       const regWordDecapitated = regWord.substring(1);
+      const regWordFirstLetter = regWord.substring(0, 1).toLowerCase();
+      const regWordFirstLetterCapitalized = regWordFirstLetter.toUpperCase();
       // could probably be improved.
       // Sentence starts with a capital letter and ends with a period. 
       // (but what if a capital name enters somewhere?...) --> lookbehind could be a solution, but not supported
       // for the moment: [^\s] : no space before the capital letter
       // to be tolerant: sentence can also start at the end of another sentence
       // TODO: trim in between
-      const interpunction = '\\.\\?!';
-      const notInterpunction = `[^${interpunction}];`
-      let sentenceReg = new RegExp(`(\\.\\s{1,3}|([^\\s]|^)[A-Z])${notInterpunction}*(${regWord}|${regWordDecapitated})${notInterpunction}*${interpunction}`);
+      const interpunctionBase = '\\.\\?!';
+      const interpunction = `[${interpunctionBase}]`;
+      const notInterpunction = `[^${interpunctionBase}]`;
+      let sentenceReg = new RegExp(`(\\.\\s{1,3}|([^\\s]|^)[A-Z])${notInterpunction}*([${regWordFirstLetter}${regWordFirstLetterCapitalized}]${regWordDecapitated})${notInterpunction}*${interpunction}`);
 
       let sentence = selectionNode.textContent;
       let hopCount = 0;
@@ -105,7 +111,7 @@ function getSurroundingSentence() {
 
 document.addEventListener('selectionchange', () => {
     // TODO: this check every time. Is that necessary?
-    chrome.runtime.sendMessage({
+    browser.runtime.sendMessage({
         type: 'checkLogin'
     });
     const text = getSelectedText();
@@ -113,9 +119,175 @@ document.addEventListener('selectionchange', () => {
         // TODO: this is initiated for every selection now.
         // Is there no context-menu event in the background that spawns when context menu's can still be modified?
         // Then it could be requested.
-        chrome.runtime.sendMessage({
+        browser.runtime.sendMessage({
             type: 'selection',
             selection: text,
         });
     }
 })
+
+/* MOBILE WORD ADD INSERT */
+
+// only add when 
+// 1. on mobile
+// 2. user wants to see the popup ("Never" was not tapped)
+var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+var showMobileAdd = true;
+if (isMobile) {
+  browser.runtime.sendMessage({
+    type: 'getDb',
+    key: 'showMobileAdd',
+    default: showMobileAdd
+  }).then( val => {
+    showMobileAdd = val;
+    if (showMobileAdd) insertMobileAdd();
+  });
+};
+
+function toggleMobileAdd(mobileAdd) {
+  mobileAdd.classList.toggle('ve-mobile-add--visible');
+}
+
+function mobileAddIsOpen(mobileAdd) {
+  return mobileAdd.classList.contains('ve-mobile-add--visible');
+}
+
+function createMobileAdd() {
+  /* ----  set-up ---- */
+  const mobileAdd = document.createElement("div");
+  mobileAdd.classList.add("ve-mobile-add");
+  mobileAdd.dataset.isOpening = false;
+
+  const topHTML = `
+    <div class="ve-mobile-add__top">
+      <span class="ve-mobile-add__infotext">Add "<span class="ve-mobile-add__selection"></span>" to </span>
+    </div>
+    `;
+  const labelHTML = `
+  <div class="ve-mobile-add__label">Provided by Vocabulary.com Enhancer</div>
+  `;
+
+  mobileAdd.insertAdjacentHTML('afterbegin', topHTML);
+
+  // bottom container
+  const bot = document.createElement('div');
+  bot.classList.add('ve-mobile-add__bottom');
+  mobileAdd.insertAdjacentElement('beforeend', bot);
+  // left icon
+  const icon = document.createElement('img');
+  icon.classList.add("ve-mobile-add__icon");
+  icon.src = browser.runtime.getURL('icons/favicon-64x64.png');
+  mobileAdd.insertAdjacentHTML('beforeend', labelHTML);
+  mobileAdd.querySelector('.ve-mobile-add__label').insertAdjacentElement('afterbegin', icon);
+  // buttons
+  const mobileAddBtn = document.createElement("button");
+  mobileAddBtn.classList.add('ve-mobile-add__button');
+  mobileAddBtn.appendChild(document.createTextNode("Add word"));
+  const denyButtons = `
+      <span class="ve-mobile-add__deny">
+        <span class="ve-mobile-add__not-now ve-mobile-add__button">Not now</span>
+        <span class="ve-mobile-add__never ve-mobile-add__button">Never</span>
+      </span>
+  `;
+  // select el
+  const selectEl = document.createElement('select');
+  selectEl.setAttribute('name', 'list-selector');
+  selectEl.classList.add('list-selector');
+  mobileAdd.querySelector('.ve-mobile-add__top').appendChild(selectEl);
+
+  // right container
+  const right = document.createElement("div");
+  right.classList.add("ve-mobile-add__right")
+  right.appendChild(mobileAddBtn);
+  mobileAddBtn.insertAdjacentHTML('beforebegin', denyButtons);
+  bot.insertAdjacentElement('beforeend', right);
+
+  /* ----  attach behavior ---- */
+  // insert select options 
+  browser.runtime.sendMessage({
+    type: 'getLists'
+  }).then(res => {
+    res.forEach(wordList => {
+      const optionEl = document.createElement('option');
+      optionEl.setAttribute('value', wordList.wordlistid);
+      const optionText = document.createTextNode(wordList.name);
+      optionEl.appendChild(optionText);
+      selectEl.appendChild(optionEl);
+    });
+  });
+
+  // add button click handler
+  mobileAddBtn.addEventListener('click', () => {
+    browser.runtime.sendMessage({
+      type: 'addText',
+      selection: getSelectedText(),
+      wordListId: selectEl.value
+    });
+    // TODO: remove popup
+  });
+
+  // not now 
+  mobileAdd.querySelector('.ve-mobile-add__not-now')
+    .addEventListener('click', () => toggleMobileAdd(mobileAdd));
+
+  // never
+  mobileAdd.querySelector('.ve-mobile-add__never')
+    .addEventListener('click', () => {
+      toggleMobileAdd(mobileAdd);
+      // persist the never setting
+      showMobileAdd = false; // in current session
+      browser.runtime.sendMessage({
+        type: 'setDb',
+        key: 'showMobileAdd',
+        value: false
+      }).then(
+        // todo: send notification / confirmation?
+      );
+    });
+  return mobileAdd;
+}
+
+/** 
+ * inserts a popup at the bottom of the screen
+ */
+function insertMobileAdd() {
+  /* Mobile adding of selected words */
+  const mobileAdd = createMobileAdd();
+
+  document.addEventListener('selectionchange', () => {
+    // // TODO: this check every time. Is that necessary?
+    // browser.runtime.sendMessage({
+    //     type: 'checkLogin'
+    // });
+    let text = getSelectedText();
+    text = text && text.trim().slice(0,100);
+    // open mobile add. showMobileAdd => check whether not disabled before
+    if (text && !mobileAddIsOpen(mobileAdd) && showMobileAdd) {
+        mobileAdd.querySelector('.ve-mobile-add__selection').innerText = text;
+        toggleMobileAdd(mobileAdd);
+        mobileAdd.dataset.isOpening = true;
+        const transitionListener = (e) => {
+          if (e.propertyName == "transform") {
+            mobileAdd.dataset.isOpening = false;
+            mobileAdd.removeEventListener('transitionend', transitionListener);
+          };
+        }
+        mobileAdd.addEventListener('transitionend', transitionListener);
+    } else if (text && mobileAddIsOpen(mobileAdd)) {
+      // update selection
+      mobileAdd.querySelector('.ve-mobile-add__selection').innerText = text;
+    }
+  });
+
+  // toggle when clicked outside of the popup (~ not now)
+  document.body.addEventListener('mousedown', (e) => {
+    if (!mobileAdd.contains(e.target) 
+        && mobileAddIsOpen(mobileAdd)
+        && !(mobileAdd.dataset.isOpening == true)) {
+      toggleMobileAdd(mobileAdd)
+    }
+  })
+
+  // insertion
+  document.body.insertAdjacentElement('beforeend', mobileAdd);
+}

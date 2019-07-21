@@ -268,3 +268,147 @@
 .ve-example-source-word {
     font-weight: 500;
 }
+
+/* Mobile add */
+
+.ve-mobile-add {
+    box-sizing: border-box;
+    padding: 10px 2.5% 7px 2.5%;
+    box-shadow: 0 0 2px 0 rgb(0, 0, .1);
+    background: linear-gradient(to bottom,rgba(255,255,255,0.9) 0,rgba(255,255,255,0.98) 100%);
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    z-index: 2;
+    font-size: 1rem;
+    font-family: 'open sans', 'Open Sans', sans-serif;
+
+    visibility: hidden;
+    transition: transform 0.5s ease-in;
+    transform: translateY(70px);
+    transition-property: transform, visibility;
+    transition-duration: 0.5s, 0s;
+    transition-delay: 0s, 0.5s; 
+    transition-timing-function: ease-in;
+}
+
+.ve-mobile-add__button {
+    font-size: 16px;
+    font-weight: 600;
+    box-shadow: 0px 1px 1px 0px #5e5e5e6b;
+    height: 40px;
+    line-height: 40px;
+    padding: 0 16px;
+    display: inline-block;
+    border-radius: 3px;
+    outline: none;
+    border: none;
+    cursor: pointer;
+}
+
+.ve-mobile-add__top {
+    width: 100%;
+    margin-bottom: 10px;
+    font-size: 16px;
+    color: #404040;
+    border-bottom: 1px solid #dbdbdb;
+    padding-bottom: 7px;
+}
+
+.ve-mobile-add__infotext {
+    white-space: nowrap;
+    overflow: hidden;
+    max-width: 52%;
+}
+
+.ve-mobile-add__selection {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 63%;
+    display: inline-block;
+    vertical-align: bottom;
+    text-transform: lowercase;
+}
+
+.ve-mobile-add__label {
+    font-size: 12px;
+    margin: 0;
+	padding: 7px 0 0 0;
+	color: #7d7d7d;
+	text-align: center;
+}
+.ve-mobile-add .ve-mobile-add__icon {
+    height: 16px !important;
+    max-height: 100% !important;
+    display: inline-block;
+    vertical-align: bottom;
+    margin-right: 4px;
+}
+
+/* Not now and Never buttons */
+.ve-mobile-add__deny > span {
+	background-color: #f0f0f0;
+    margin: 0;
+    margin-right: 13px;
+	position: relative;
+	color: #575757;
+}
+
+.ve-mobile-add__bottom,
+.ve-mobile-add__top {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    color: #000;
+}
+
+.ve-mobile-add__top {
+    justify-content: flex-end;
+}
+
+.ve-mobile-add__bottom {
+	justify-content: flex-end;
+	border-bottom: 1px solid #dbdbdb;
+	padding-bottom: 10px;
+}
+
+.ve-mobile-add.ve-mobile-add--visible {
+    visibility: visible;
+    transition: transform 0.5s ease-in;
+    transform: translateY(0);
+}
+
+.ve-mobile-add select {
+    margin: 0;
+    margin-left: 13px;
+    padding: 0 4px;
+    border: 2px solid #C1C1C1;
+    border-radius: 3px;
+    box-sizing: border-box;
+    max-width: 40vw;
+    font-size: 16px;
+    position: relative;
+    top: 1px;
+}
+
+.ve-mobile-add select
+{
+    /* height: 30px !important; */
+    max-height: 100% !important;
+}
+
+.ve-mobile-add button { 
+    font-size: inherit;
+    margin: 0;
+    color: white;
+    text-decoration: none !important;
+    background-image: none;
+    width: auto;
+    background-color: #4db538;
+}
+
+.ve-mobile-add .ve-mobile-add__right {
+    display: flex;
+    justify-content: flex-end;
+}
