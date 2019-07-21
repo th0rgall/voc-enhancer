@@ -65,26 +65,37 @@ window.addEventListener('DOMContentLoaded', (event) => {
             /* other settings */
             const otherSettings = [
                 {
+                    title: 'Translations',
                     label: 'Show a translation module on definitions',
                     type: 'checkbox',
                     key: 'showTranslations'
                 },
                 {
+                    title: 'Links',
                     label: 'Show links to external services',
                     type: 'checkbox',
                     key: 'showExternalLinks',
                 },
                 {
+                    title: 'My Lists',
                     label: 'Add a "My Lists" menu entry to the top navigation bar.',
                     type: 'checkbox',
                     key: 'showMyLists',
                 },
                 {
+                    title: 'Audio',
                     label: 'Show an audio button on words in the list view',
                     type: 'checkbox',
                     key: 'showAudio',
                 },
                 {
+                    title: 'Examples',
+                    label: 'Show examples in the word game when quizzing a list',
+                    type: 'checkbox',
+                    key: 'showExamples',
+                }, 
+                {
+                    title: 'Mobile word-adding',
                     label: 'Show a word-adding popup when selecting on mobile',
                     type: 'checkbox',
                     key: 'showMobileAdd',

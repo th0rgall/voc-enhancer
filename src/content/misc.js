@@ -4,8 +4,11 @@ if (document.readyState === "complete" ) {
     window.addEventListener('load', initMisc);
 }
 
-function initMisc() {
-    insertListLink();
+async function initMisc() {
+    const { getSetting } = window.vocenhancer;
+    if (await getSetting('showMyLists')) {
+        insertListLink();
+    }
 }
 
 /**
