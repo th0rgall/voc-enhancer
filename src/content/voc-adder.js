@@ -22,7 +22,7 @@ browser.runtime.onMessage.addListener(
       } else if (request.type === 'sentence') {
           return Promise.resolve({
             type: 'sentence', 
-            sentence: getSurroundingSentence(), 
+            sentence: getSurroundingSentence(),
             location: window.location.href,
             title: document.title ? document.title : undefined
           });
@@ -61,17 +61,21 @@ function getSurroundingSentence() {
       const escapeRegExp = function(str) {
         return str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
       }
+      
       const regWord = escapeRegExp(word);
       const regWordDecapitated = regWord.substring(1);
+      const regWordFirstLetter = regWord.substring(0, 1).toLowerCase();
+      const regWordFirstLetterCapitalized = regWordFirstLetter.toUpperCase();
       // could probably be improved.
       // Sentence starts with a capital letter and ends with a period. 
       // (but what if a capital name enters somewhere?...) --> lookbehind could be a solution, but not supported
       // for the moment: [^\s] : no space before the capital letter
       // to be tolerant: sentence can also start at the end of another sentence
       // TODO: trim in between
-      const interpunction = '\\.\\?!';
-      const notInterpunction = `[^${interpunction}];`
-      let sentenceReg = new RegExp(`(\\.\\s{1,3}|([^\\s]|^)[A-Z])${notInterpunction}*(${regWord}|${regWordDecapitated})${notInterpunction}*${interpunction}`);
+      const interpunctionBase = '\\.\\?!';
+      const interpunction = `[${interpunctionBase}]`;
+      const notInterpunction = `[^${interpunctionBase}]`;
+      let sentenceReg = new RegExp(`(\\.\\s{1,3}|([^\\s]|^)[A-Z])${notInterpunction}*([${regWordFirstLetter}${regWordFirstLetterCapitalized}]${regWordDecapitated})${notInterpunction}*${interpunction}`);
 
       let sentence = selectionNode.textContent;
       let hopCount = 0;
