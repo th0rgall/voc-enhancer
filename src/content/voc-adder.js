@@ -153,6 +153,18 @@ function createMobileAdd() {
   const mobileAdd = document.createElement("div");
   mobileAdd.classList.add("ve-mobile-add");
   mobileAdd.dataset.isOpening = false;
+
+  const topHTML = `
+    <div class="ve-mobile-add__top">
+      <span class="ve-mobile-add__infotext">Add "<span class="ve-mobile-add__selection"></span>" to </span>
+    </div>
+    `;
+  const labelHTML = `
+  <div class="ve-mobile-add__label">Provided by Vocabulary.com Enhancer</div>
+  `;
+
+  mobileAdd.insertAdjacentHTML('afterbegin', topHTML);
+
   // bottom container
   const bot = document.createElement('div');
   bot.classList.add('ve-mobile-add__bottom');
@@ -161,29 +173,30 @@ function createMobileAdd() {
   const icon = document.createElement('img');
   icon.classList.add("ve-mobile-add__icon");
   icon.src = browser.runtime.getURL('icons/favicon-64x64.png');
-  bot.insertAdjacentElement('afterbegin', icon);
-  // button
+  mobileAdd.insertAdjacentHTML('beforeend', labelHTML);
+  mobileAdd.querySelector('.ve-mobile-add__label').insertAdjacentElement('afterbegin', icon);
+  // buttons
   const mobileAddBtn = document.createElement("button");
+  mobileAddBtn.classList.add('ve-mobile-add__button');
   mobileAddBtn.appendChild(document.createTextNode("Add word"));
+  const denyButtons = `
+      <span class="ve-mobile-add__deny">
+        <span class="ve-mobile-add__not-now ve-mobile-add__button">Not now</span>
+        <span class="ve-mobile-add__never ve-mobile-add__button">Never</span>
+      </span>
+  `;
   // select el
   const selectEl = document.createElement('select');
   selectEl.setAttribute('name', 'list-selector');
   selectEl.classList.add('list-selector');
+  mobileAdd.querySelector('.ve-mobile-add__top').appendChild(selectEl);
+
   // right container
   const right = document.createElement("div");
   right.classList.add("ve-mobile-add__right")
-  right.appendChild(selectEl);
   right.appendChild(mobileAddBtn);
+  mobileAddBtn.insertAdjacentHTML('beforebegin', denyButtons);
   bot.insertAdjacentElement('beforeend', right);
-
-  const topHTML = `
-    <div class="ve-mobile-add__label">Vocabulary.com Enhancer</div>
-    <div class="ve-mobile-add__top">
-      <span class="ve-mobile-add__infotext">Add "<span class="ve-mobile-add__selection"></span>" to a list?</span>
-      <span class="ve-mobile-add__deny"><div></div><span class="ve-mobile-add__not-now">Not now</span><span class="ve-mobile-add__never">Never</span></span>
-    </div>
-    `;
-  mobileAdd.insertAdjacentHTML('afterbegin', topHTML);
 
   /* ----  attach behavior ---- */
   // insert select options 
