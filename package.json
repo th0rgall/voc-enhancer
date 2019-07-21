@@ -1,6 +1,6 @@
 {
   "name": "voc-enhancer",
-  "version": "0.7.0",
+  "version": "0.7.1",
   "id": "testid@testorg.com",
   "description": "Show translations in the word game & on definitions. Add words to your lists from any web page.",
   "scripts": {
@@ -24,7 +24,6 @@
   "dependencies": {
     "clean-webpack-plugin": "^2.0.1",
     "copy-webpack-plugin": "^5.0.1",
-    "crx": "^3.2.1",
     "filemanager-webpack-plugin": "^2.0.5",
     "voc-api": "th0rgall/voc-api",
     "webextension-polyfill": "^0.4.0",
