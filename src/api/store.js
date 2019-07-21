@@ -8,7 +8,9 @@ const DEFAULT_SETTINGS = {
     showTranslations: true,
     showMobileAdd: true,
     showExternalLinks: true,
-    showMyLists: true
+    showMyLists: true,
+    showAudio: true,
+    showExamples: true
 };
 
 export default class Db {

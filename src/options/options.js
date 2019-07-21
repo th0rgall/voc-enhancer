@@ -65,7 +65,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
             /* other settings */
             const otherSettings = [
                 {
-                    label: 'Show translations (in word game, detail page)',
+                    label: 'Show a translation module on definitions',
                     type: 'checkbox',
                     key: 'showTranslations'
                 },
@@ -78,6 +78,11 @@ window.addEventListener('DOMContentLoaded', (event) => {
                     label: 'Add a "My Lists" menu entry to the top navigation bar.',
                     type: 'checkbox',
                     key: 'showMyLists',
+                },
+                {
+                    label: 'Show an audio button on words in the list view',
+                    type: 'checkbox',
+                    key: 'showAudio',
                 },
                 {
                     label: 'Show a word-adding popup when selecting on mobile',

@@ -1,8 +1,12 @@
 import { windowExporter } from './content/element-creator';
+import browser from 'webextension-polyfill';
+
 windowExporter(
     {key: "render", value: render},
     {key: "renderTo", value: renderTo},
-    {key: "getListIdFromDocUrl", value: getListIdFromDocUrl});
+    {key: "getListIdFromDocUrl", value: getListIdFromDocUrl},
+    {key: "getSetting", value: getSetting},
+    {key: "setSetting", value: setSetting});
 
 if (document.readyState === "complete" ) {
     window.vocenhancer.initialize();
@@ -73,4 +77,26 @@ function getListIdFromDocUrl() {
     } else {
         return false;
     }
+}
+
+/**
+ * Helper to get values of settings from the store in the backend
+ */
+async function getSetting(key, deflt=true) {
+    return await browser.runtime.sendMessage({
+        type: 'getDb',
+        key,
+        default: deflt
+    });
+}
+
+/**
+ * Helper to set values of settings from the store in the backend
+ */
+async function setSetting(key, value) {
+    return await browser.runtime.sendMessage({
+        type: 'setDb',
+        key,
+        value
+    });
 }
