@@ -249,7 +249,7 @@ function addToList(selectionText, wordListId) {
 // returns an onlick function for the Add To... context menu
 function addToF(wordListId) {
   return (info, tab) => {
-    addToList(info.selectionText);
+    addToList(info.selectionText, wordListId);
   }
 }
 
