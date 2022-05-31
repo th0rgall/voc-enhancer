@@ -1,3 +1,5 @@
+_**Warning: this code has not been maintained for years and has several issues.** Most of it might still work, but I recommend you only use this repository for reference._
+
 # Vocabulary.com Enhancer
 
 This browser extension for Firefox/Chrome allows [vocabulary.com](https://www.vocabulary.com/) users to add words from any web page to their vocabulary lists. It also offers translations to any language in the world learning game and links to clarifying services like Google Images or the Urban Dictionary. 
